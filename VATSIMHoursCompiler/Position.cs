@@ -10,29 +10,42 @@ namespace VATSIMHoursCompiler
     {
         public static List<Position> list = new List<Position>();
 
-        public string strName { get; private set; }
+        public string strName { get; set; }
         public Position posParent { get; set; }
         public List<Position> listChildren { get; }
         public List<Condition> listConditions { get; }
+        public bool isShown { get; set; } = false;
 
         public Position(string _name, Position _parent)
         {
             strName = _name;
             posParent = _parent;
-            _parent.listChildren.Add(this);
+
+            if (_parent != null)
+            {
+                _parent.listChildren.Add(this);
+            }
 
             listChildren = new List<Position>();
             listConditions = new List<Condition>();
         }
     }
 
-    class Condition { }
+    class Condition
+    {
+        public string strName;
+
+        public Condition(string _name)
+        {
+            strName = _name;
+        }
+    }
 
     class PreCondition : Condition
     {
         public string strPre;
 
-        public PreCondition(string _pre)
+        public PreCondition(string _name, string _pre) : base(_name)
         {
             strPre = _pre;
         }
@@ -42,7 +55,7 @@ namespace VATSIMHoursCompiler
     {
         public string strSuf;
 
-        public SufCondition(string _suf)
+        public SufCondition(string _name, string _suf) : base(_name)
         {
             strSuf = _suf;
         }
@@ -53,7 +66,7 @@ namespace VATSIMHoursCompiler
         public string strPre;
         public string strSuf;
 
-        public PreSufCondition(string _pre, string _suf)
+        public PreSufCondition(string _name, string _pre, string _suf) : base(_name)
         {
             strPre = _pre;
             strSuf = _suf;
@@ -64,7 +77,7 @@ namespace VATSIMHoursCompiler
     {
         public string strCs;
 
-        public CsCondition(string _cs)
+        public CsCondition(string _name, string _cs) : base(_name)
         {
             strCs = _cs;
         }
