@@ -215,8 +215,13 @@ namespace VATSIMHoursCompiler
 
                         strData = new string[] { cscon.strName, "Callsign", cscon.strCs };
                     }
+                    else
+                    {
+                        strData = new string[] { "", "None", "" };
+                    }
 
                     ListViewItem lviTemp = new ListViewItem(strData);
+                    lvConditions.Items.Add(lviTemp);
                 }
 
                 tlpDetails.Show();
@@ -457,6 +462,8 @@ namespace VATSIMHoursCompiler
             lvConditions.SelectedItems[0].SubItems[1].Text = strType;
             lvConditions.SelectedItems[0].SubItems[2].Text = strValue;
 
+            lvPositions.SelectedItems[0].SubItems[2].Text = ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Count.ToString();
+
             ResizeListViewColumns(lvConditions);
         }
 
@@ -607,7 +614,14 @@ namespace VATSIMHoursCompiler
                     }
                 }
 
-                lvResults.Items.Add(new ListViewItem(data.ToArray()));
+                ListViewItem lviTemp = new ListViewItem(data.ToArray());
+
+                if (mem.intCID == 1332038)
+                {
+                    lviTemp.Font = new Font(new Font("Comic Sans MS", lviTemp.Font.Size), FontStyle.Bold);
+                }
+
+                lvResults.Items.Add(lviTemp);
             }
 
             ResizeListViewColumns(lvMembers);

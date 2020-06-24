@@ -12,8 +12,8 @@ namespace VATSIMHoursCompiler
 
         public string strName { get; set; }
         public Position posParent { get; set; }
-        public List<Position> listChildren { get; }
-        public List<Condition> listConditions { get; }
+        public List<Position> listChildren { get; set; }
+        public List<Condition> listConditions { get; set; }
         public bool isShown { get; set; } = false;
 
         public Position(string _name, Position _parent)
