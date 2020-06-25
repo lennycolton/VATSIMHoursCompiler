@@ -19,6 +19,20 @@ namespace VATSIMHoursCompiler
             decMins = _mins;
         }
 
+        public decimal MinsWithChildren()
+        {
+            decimal decReturn = decMins;
+
+            foreach (Position child in posPosition.listChildren)
+            {
+                Record rcd = Find(memMember.listRecords, child.strName);
+
+                decReturn += rcd.MinsWithChildren();
+            }
+
+            return decReturn;
+        }
+
         public static Record Find(List<Record> _list, string _pos)
         {
             //Create field

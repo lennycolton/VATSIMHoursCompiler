@@ -84,6 +84,7 @@
             this.lvResults = new System.Windows.Forms.ListView();
             this.chResultsCID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chResultsName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chResultsBlank = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clbColumns = new System.Windows.Forms.CheckedListBox();
             this.BtnParent = new System.Windows.Forms.Button();
             this.BtnGet = new System.Windows.Forms.Button();
@@ -93,6 +94,8 @@
             this.ssBottom = new System.Windows.Forms.StatusStrip();
             this.pbStatus = new System.Windows.Forms.ToolStripProgressBar();
             this.tscMain = new System.Windows.Forms.ToolStripContainer();
+            this.BtnRefilter = new System.Windows.Forms.Button();
+            this.BtnExport = new System.Windows.Forms.Button();
             this.tbcMain.SuspendLayout();
             this.tbpSetup.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -681,16 +684,19 @@
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 3;
+            this.tableLayoutPanel2.ColumnCount = 4;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81F));
             this.tableLayoutPanel2.Controls.Add(this.lvResults, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.clbColumns, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.BtnParent, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.BtnGet, 2, 2);
-            this.tableLayoutPanel2.Controls.Add(this.BtnChildren, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.clbColumns, 2, 1);
             this.tableLayoutPanel2.Controls.Add(this.LblCurrent, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.BtnParent, 2, 2);
+            this.tableLayoutPanel2.Controls.Add(this.BtnGet, 3, 0);
+            this.tableLayoutPanel2.Controls.Add(this.BtnRefilter, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.BtnChildren, 2, 2);
+            this.tableLayoutPanel2.Controls.Add(this.BtnExport, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -706,7 +712,9 @@
             // 
             this.lvResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.chResultsCID,
-            this.chResultsName});
+            this.chResultsName,
+            this.chResultsBlank});
+            this.tableLayoutPanel2.SetColumnSpan(this.lvResults, 2);
             this.lvResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvResults.GridLines = true;
             this.lvResults.HideSelection = false;
@@ -727,6 +735,10 @@
             // 
             this.chResultsName.Text = "Name";
             // 
+            // chResultsBlank
+            // 
+            this.chResultsBlank.Text = "";
+            // 
             // clbColumns
             // 
             this.tableLayoutPanel2.SetColumnSpan(this.clbColumns, 2);
@@ -739,7 +751,8 @@
             // 
             // BtnParent
             // 
-            this.BtnParent.Location = new System.Drawing.Point(627, 3);
+            this.BtnParent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BtnParent.Location = new System.Drawing.Point(627, 421);
             this.BtnParent.Name = "BtnParent";
             this.BtnParent.Size = new System.Drawing.Size(75, 23);
             this.BtnParent.TabIndex = 2;
@@ -749,7 +762,8 @@
             // 
             // BtnGet
             // 
-            this.BtnGet.Location = new System.Drawing.Point(708, 421);
+            this.BtnGet.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BtnGet.Location = new System.Drawing.Point(708, 3);
             this.BtnGet.Name = "BtnGet";
             this.BtnGet.Size = new System.Drawing.Size(75, 23);
             this.BtnGet.TabIndex = 1;
@@ -759,7 +773,8 @@
             // 
             // BtnChildren
             // 
-            this.BtnChildren.Location = new System.Drawing.Point(708, 3);
+            this.BtnChildren.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BtnChildren.Location = new System.Drawing.Point(708, 421);
             this.BtnChildren.Name = "BtnChildren";
             this.BtnChildren.Size = new System.Drawing.Size(75, 23);
             this.BtnChildren.TabIndex = 3;
@@ -773,7 +788,7 @@
             this.LblCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LblCurrent.Location = new System.Drawing.Point(3, 0);
             this.LblCurrent.Name = "LblCurrent";
-            this.LblCurrent.Size = new System.Drawing.Size(618, 29);
+            this.LblCurrent.Size = new System.Drawing.Size(537, 29);
             this.LblCurrent.TabIndex = 4;
             this.LblCurrent.Tag = "";
             this.LblCurrent.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -813,6 +828,28 @@
             this.tscMain.Size = new System.Drawing.Size(800, 501);
             this.tscMain.TabIndex = 3;
             this.tscMain.TopToolStripPanelVisible = false;
+            // 
+            // BtnRefilter
+            // 
+            this.BtnRefilter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BtnRefilter.Location = new System.Drawing.Point(627, 3);
+            this.BtnRefilter.Name = "BtnRefilter";
+            this.BtnRefilter.Size = new System.Drawing.Size(75, 23);
+            this.BtnRefilter.TabIndex = 6;
+            this.BtnRefilter.Text = "Re-Filter";
+            this.BtnRefilter.UseVisualStyleBackColor = true;
+            this.BtnRefilter.Click += new System.EventHandler(this.BtnRefilter_Click);
+            // 
+            // BtnExport
+            // 
+            this.BtnExport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BtnExport.Location = new System.Drawing.Point(546, 3);
+            this.BtnExport.Name = "BtnExport";
+            this.BtnExport.Size = new System.Drawing.Size(75, 23);
+            this.BtnExport.TabIndex = 7;
+            this.BtnExport.Text = "Export";
+            this.BtnExport.UseVisualStyleBackColor = true;
+            this.BtnExport.Click += new System.EventHandler(this.BtnExport_Click);
             // 
             // Main
             // 
@@ -919,6 +956,9 @@
         private System.Windows.Forms.StatusStrip ssBottom;
         private System.Windows.Forms.ToolStripContainer tscMain;
         private System.Windows.Forms.ToolStripProgressBar pbStatus;
+        private System.Windows.Forms.ColumnHeader chResultsBlank;
+        private System.Windows.Forms.Button BtnRefilter;
+        private System.Windows.Forms.Button BtnExport;
     }
 }
 

@@ -32,25 +32,17 @@ namespace VATSIMHoursCompiler
             ResizeListViewColumns(lvResults);
         }
 
-        private Dictionary<string, int[]> listViewHeaderWidths = new Dictionary<string, int[]>();
         private void ResizeListViewColumns(ListView lv)
         {
-            int[] headerWidths = listViewHeaderWidths.ContainsKey(lv.Name) ? listViewHeaderWidths[lv.Name] : null;
-
             lv.BeginUpdate();
 
-            if (headerWidths == null)
+            lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+
+            int[] headerWidths = new int[lv.Columns.Count];
+
+            for (int i = 0; i < lv.Columns.Count; i++)
             {
-                lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-
-                headerWidths = new int[lv.Columns.Count];
-
-                for (int i = 0; i < lv.Columns.Count; i++)
-                {
-                    headerWidths[i] = lv.Columns[i].Width;
-                }
-
-                listViewHeaderWidths.Add(lv.Name, headerWidths);
+                headerWidths[i] = lv.Columns[i].Width;
             }
 
             lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -77,7 +69,7 @@ namespace VATSIMHoursCompiler
 
                 if (cid == 1332038)
                 {
-                    lviTemp.Font = new Font(new Font("Comic Sans MS", lviTemp.Font.Size), FontStyle.Bold);
+                    lviTemp.Font = new Font("Comic Sans MS", lviTemp.Font.Size);
                 }
 
                 lvMembers.Items.Add(lviTemp);
@@ -187,8 +179,10 @@ namespace VATSIMHoursCompiler
 
                 lvConditions.Items.Clear();
 
-                foreach (Condition con in posTemp.listConditions)
+                for (int i = 0; i < posTemp.listConditions.Count; i++)
                 {
+                    Condition con = posTemp.listConditions[i];
+
                     string[] strData = null;
 
                     if (con is PreCondition)
@@ -221,6 +215,7 @@ namespace VATSIMHoursCompiler
                     }
 
                     ListViewItem lviTemp = new ListViewItem(strData);
+                    lviTemp.Tag = i;
                     lvConditions.Items.Add(lviTemp);
                 }
 
@@ -230,13 +225,16 @@ namespace VATSIMHoursCompiler
             {
                 tlpDetails.Hide();
             }
+
+            ResizeListViewColumns(lvConditions);
         }
 
         private void lvConditions_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lvConditions.SelectedItems.Count > 0)
             {
-                Condition con = (Condition)lvConditions.SelectedItems[0].Tag;
+                int conid = (int)lvConditions.SelectedItems[0].Tag;
+                Condition con = ((Position)lvPositions.SelectedItems[0].Tag).listConditions[conid];
 
                 TxtConName.Text = con.strName;
 
@@ -318,13 +316,13 @@ namespace VATSIMHoursCompiler
             ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Add(con);
 
             ListViewItem lviTemp = new ListViewItem(new string[] { "", "None", "" });
-            lviTemp.Tag = con;
+            lviTemp.Tag = ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Count - 1;
             lvConditions.Items.Add(lviTemp);
 
             lvConditions.SelectedItems.Clear();
             lvConditions.SelectedIndices.Add(lvConditions.Items.Count - 1);
 
-            lvPositions.SelectedItems[0].SubItems[2].Text = ((Position)lvPositions.SelectedItems[0].Tag).listChildren.Count.ToString();
+            lvPositions.SelectedItems[0].SubItems[2].Text = ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Count.ToString();
 
             ResizeListViewColumns(lvConditions);
         }
@@ -333,8 +331,9 @@ namespace VATSIMHoursCompiler
         {
             if (lvConditions.SelectedItems.Count > 0)
             {
-                ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Remove((Condition)lvConditions.SelectedItems[0].Tag);
+                ((Position)lvPositions.SelectedItems[0].Tag).listConditions.RemoveAt((int)lvConditions.SelectedItems[0].Tag);
                 lvConditions.Items.Remove(lvConditions.SelectedItems[0]);
+                lvPositions.SelectedItems[0].SubItems[2].Text = ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Count.ToString();
 
                 ResizeListViewColumns(lvConditions);
             }
@@ -415,7 +414,8 @@ namespace VATSIMHoursCompiler
 
         private void BtnConSave_Click(object sender, EventArgs e)
         {
-            Condition con = (Condition)lvConditions.SelectedItems[0].Tag;
+            int conid = (int)lvConditions.SelectedItems[0].Tag;
+            Condition con;
 
             string strName = TxtConName.Text;
             string strType = "";
@@ -455,8 +455,11 @@ namespace VATSIMHoursCompiler
                     break;
 
                 default:
+                    con = new Condition("");
                     break;
             }
+
+            ((Position)lvPositions.SelectedItems[0].Tag).listConditions[conid] = con;
 
             lvConditions.SelectedItems[0].SubItems[0].Text = strName;
             lvConditions.SelectedItems[0].SubItems[1].Text = strType;
@@ -530,6 +533,7 @@ namespace VATSIMHoursCompiler
                 if (pos.posParent == (Position)clbColumns.Tag)
                 {
                     clbColumns.Items.Add(new ComboBoxItem(pos.strName, pos));
+                    clbColumns.SetItemChecked(clbColumns.Items.Count - 1, pos.isShown);
                 }
             }
         }
@@ -547,6 +551,7 @@ namespace VATSIMHoursCompiler
                     if (pos.posParent == (Position)clbColumns.Tag)
                     {
                         clbColumns.Items.Add(new ComboBoxItem(pos.strName, pos));
+                        clbColumns.SetItemChecked(clbColumns.Items.Count - 1, pos.isShown);
                     }
                 }
 
@@ -575,57 +580,9 @@ namespace VATSIMHoursCompiler
                 lvi.SubItems[2].Text = Member.ratings[mem.intRating];
             }
 
-            ColumnHeader chCID = lvResults.Columns[0];
-            ColumnHeader chName = lvResults.Columns[1];
-
-            lvResults.Columns.Clear();
-            lvResults.Columns.Add(chCID);
-            lvResults.Columns.Add(chName);
-
-            foreach (Position pos in Position.list)
-            {
-                if (pos.isShown)
-                {
-                    lvResults.Columns.Add(pos.strName, -1, HorizontalAlignment.Left);
-                    lvResults.Columns[lvResults.Columns.Count - 1].Tag = pos;
-                }
-            }
-
-            foreach (Member mem in Member.list)
-            {
-                List<string> data = new List<string>();
-
-                data.Add(mem.intCID.ToString());
-                data.Add(mem.strName);
-
-                for (int i = 2; i < lvResults.Columns.Count; i++)
-                {
-                    Position pos = (Position)lvResults.Columns[i].Tag;
-
-                    Record rcd = Record.Find(mem.listRecords, pos.strName);
-
-                    if (rcd == null)
-                    {
-                        data.Add("0");
-                    }
-                    else
-                    {
-                        data.Add(rcd.decMins.ToString("F2"));
-                    }
-                }
-
-                ListViewItem lviTemp = new ListViewItem(data.ToArray());
-
-                if (mem.intCID == 1332038)
-                {
-                    lviTemp.Font = new Font(new Font("Comic Sans MS", lviTemp.Font.Size), FontStyle.Bold);
-                }
-
-                lvResults.Items.Add(lviTemp);
-            }
-
             ResizeListViewColumns(lvMembers);
-            ResizeListViewColumns(lvResults);
+
+            PopulateResults();
             StopProgressBar();
         }
 
@@ -652,6 +609,77 @@ namespace VATSIMHoursCompiler
         {
             pbStatus.Style = ProgressBarStyle.Continuous;
             pbStatus.Value = 0;
+        }
+
+        private void BtnRefilter_Click(object sender, EventArgs e)
+        {
+            PopulateResults();
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PopulateResults()
+        {
+            lvResults.Items.Clear();
+
+            ColumnHeader chCID = lvResults.Columns[0];
+            ColumnHeader chName = lvResults.Columns[1];
+            ColumnHeader chResBlank = lvResults.Columns[lvResults.Columns.Count - 1];
+
+            lvResults.Columns.Clear();
+            lvResults.Columns.Add(chCID);
+            lvResults.Columns.Add(chName);
+
+            foreach (Position pos in Position.list)
+            {
+                if (pos.isShown)
+                {
+                    lvResults.Columns.Add(pos.strName, -1, HorizontalAlignment.Left);
+                    lvResults.Columns[lvResults.Columns.Count - 1].Tag = pos;
+                }
+            }
+
+            lvResults.Columns.Add(chResBlank);
+
+            foreach (Member mem in Member.list)
+            {
+                List<string> data = new List<string>();
+
+                data.Add(mem.intCID.ToString());
+                data.Add(mem.strName);
+
+                for (int i = 2; i < lvResults.Columns.Count - 1; i++)
+                {
+                    Position pos = (Position)lvResults.Columns[i].Tag;
+
+                    Record rcd = Record.Find(mem.listRecords, pos.strName);
+
+                    if (rcd == null)
+                    {
+                        data.Add("0");
+                    }
+                    else
+                    {
+                        decimal decMins = rcd.MinsWithChildren();
+
+                        data.Add(decimal.Truncate(decMins / 60).ToString("F0") + ":" + decimal.Truncate(decMins % 60).ToString("00"));
+                    }
+                }
+
+                ListViewItem lviTemp = new ListViewItem(data.ToArray());
+
+                if (mem.intCID == 1332038)
+                {
+                    lviTemp.Font = new Font("Comic Sans MS", lviTemp.Font.Size);
+                }
+
+                lvResults.Items.Add(lviTemp);
+            }
+
+            ResizeListViewColumns(lvResults);
         }
     }
 }

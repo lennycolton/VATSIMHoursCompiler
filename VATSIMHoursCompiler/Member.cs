@@ -16,7 +16,8 @@ namespace VATSIMHoursCompiler
         public string strName { get; set; }
         public int intRating { get; set; }
 
-        public List<Record> listRecords { get; }
+        public List<Record> listRecords { get; set; }
+
         public List<JsonResult> listJsonCs { get; set; }
         public List<JsonResult> listJsonPre { get; set; }
         public List<JsonResult> listJsonSuf { get; set; }

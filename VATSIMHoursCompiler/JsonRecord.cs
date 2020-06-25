@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace VATSIMHoursCompiler
 {
@@ -16,78 +17,89 @@ namespace VATSIMHoursCompiler
 
         public static void PullAll()
         {
+            List<Task> listTasks = new List<Task>();
+
             foreach (Member mem in Member.list)
             {
-                List<JsonRecord> listSessions = PullSessions(mem.intCID);
-                List<JsonResult> listResults = new List<JsonResult>();
-                
-                foreach (JsonRecord record in listSessions)
-                {
-                    listResults.AddRange(record.results);
-                }
-
-                mem.listJsonCs = JsonResult.Sort(listResults.GroupBy(x => x.cs).Select(y => y.First()).ToList(), 0);
-
-                foreach (JsonResult jrs in mem.listJsonCs)
-                {
-                    string[] split = jrs.cs.Split('_');
-                    jrs.pre = split[0];
-                    jrs.suf = split.Last();
-                }
-
-                mem.listJsonPre = JsonResult.Sort(listResults.GroupBy(x => x.cs).Select(y => y.First()).ToList(), 1);
-                mem.listJsonSuf = JsonResult.Sort(listResults.GroupBy(x => x.cs).Select(y => y.First()).ToList(), 2);
-
-                foreach (Position pos in Position.list)
-                {
-                    List<JsonResult> listFind = new List<JsonResult>();
-
-                    foreach (Condition con in pos.listConditions)
-                    {
-                        if (con is PreCondition)
-                        {
-                            listFind.AddRange(JsonResult.FindPre(mem.listJsonCs, ((PreCondition)con).strPre));
-                        }
-                        else if (con is SufCondition)
-                        {
-                            listFind.AddRange(JsonResult.FindSuf(mem.listJsonCs, ((SufCondition)con).strSuf));
-                        }
-                        else if (con is PreSufCondition)
-                        {
-                            List<JsonResult> listTempFind = JsonResult.FindPre(mem.listJsonCs, ((PreSufCondition)con).strPre);
-
-                            for (int i = listTempFind.Count - 1; i >= 0; i--)
-                            {
-                                if (listTempFind[i].suf != ((PreSufCondition)con).strSuf)
-                                {
-                                    listTempFind.RemoveAt(i);
-                                }
-                            }
-
-                            listFind.AddRange(listTempFind);
-                        }
-                        else if (con is CsCondition)
-                        {
-                            JsonResult jsrTemp = JsonResult.FindCs(mem.listJsonCs, ((CsCondition)con).strName);
-
-                            if (jsrTemp != null)
-                            {
-                                listFind.Add(jsrTemp);
-                            }
-                        }
-                    }
-
-                    decimal decMins = 0;
-
-                    foreach (JsonResult jsr in listFind)
-                    {
-                        decMins += jsr.time;
-                    }
-
-                    Record rcdNew = new Record(mem, pos, decMins);
-                    mem.listRecords.Add(rcdNew);
-                }
+                listTasks.Add(Task.Run(() => CollateData(mem)));
             }
+
+            Task.WaitAll(listTasks.ToArray());
+        }
+
+        private static async Task CollateData(Member mem)
+        {
+            List<JsonRecord> listSessions = PullSessions(mem.intCID);
+            List<JsonResult> listResults = new List<JsonResult>();
+
+            foreach (JsonRecord record in listSessions)
+            {
+                listResults.AddRange(record.results);
+            }
+
+            mem.listJsonCs = JsonResult.Sort(listResults.GroupBy(x => x.cs).Select(y => y.First()).ToList(), 0);
+
+            foreach (JsonResult jrs in mem.listJsonCs)
+            {
+                string[] split = jrs.cs.Split('_');
+                jrs.pre = split[0];
+                jrs.suf = split.Last();
+            }
+
+            mem.listJsonPre = JsonResult.Sort(listResults.GroupBy(x => x.cs).Select(y => y.First()).ToList(), 1);
+            mem.listJsonSuf = JsonResult.Sort(listResults.GroupBy(x => x.cs).Select(y => y.First()).ToList(), 2);
+
+            foreach (Position pos in Position.list)
+            {
+                List<JsonResult> listFind = new List<JsonResult>();
+
+                foreach (Condition con in pos.listConditions)
+                {
+                    if (con is PreCondition)
+                    {
+                        listFind.AddRange(JsonResult.FindPre(mem.listJsonCs, ((PreCondition)con).strPre));
+                    }
+                    else if (con is SufCondition)
+                    {
+                        listFind.AddRange(JsonResult.FindSuf(mem.listJsonCs, ((SufCondition)con).strSuf));
+                    }
+                    else if (con is PreSufCondition)
+                    {
+                        List<JsonResult> listTempFind = JsonResult.FindPre(mem.listJsonCs, ((PreSufCondition)con).strPre);
+
+                        for (int i = listTempFind.Count - 1; i >= 0; i--)
+                        {
+                            if (listTempFind[i].suf != ((PreSufCondition)con).strSuf)
+                            {
+                                listTempFind.RemoveAt(i);
+                            }
+                        }
+
+                        listFind.AddRange(listTempFind);
+                    }
+                    else if (con is CsCondition)
+                    {
+                        JsonResult jsrTemp = JsonResult.FindCs(mem.listJsonCs, ((CsCondition)con).strName);
+
+                        if (jsrTemp != null)
+                        {
+                            listFind.Add(jsrTemp);
+                        }
+                    }
+                }
+
+                decimal decMins = 0;
+
+                foreach (JsonResult jsr in listFind)
+                {
+                    decMins += jsr.time;
+                }
+
+                Record rcdNew = new Record(mem, pos, decMins);
+                mem.listRecords.Add(rcdNew);
+            }
+
+            mem.listRecords = Record.Sort(mem.listRecords);
         }
 
         private static List<JsonRecord> PullSessions(int _cid)
@@ -104,8 +116,6 @@ namespace VATSIMHoursCompiler
 
             return listReturn;
         }
-
-        
     }
 
     class JsonResult
