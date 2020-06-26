@@ -19,10 +19,21 @@ namespace VATSIMHoursCompiler
             SetColumnWidth();
             clbColumns.Tag = null;
 
-            bgwMembers.DoWork += BgwMembers_DoWork;
-            bgwMembers.RunWorkerCompleted += BgwMembers_RunWorkerCompleted;
+            bgwAPI.DoWork += BgwAPI_DoWork;
+            bgwAPI.RunWorkerCompleted += BgwAPI_RunWorkerCompleted;
+
+            bgwExport.DoWork += BgwExport_DoWork;
+            bgwExport.RunWorkerCompleted += BgwExport_RunWorkerCompleted;
+
+            bgwSaveProfile.DoWork += BgwSaveProfile_DoWork;
+            bgwSaveProfile.RunWorkerCompleted += BgwSaveProfile_RunWorkerCompleted;
+
+            bgwLoadProfile.DoWork += BgwLoadProfile_DoWork;
+            bgwLoadProfile.RunWorkerCompleted += BgwLoadProfile_RunWorkerCompleted;
 
             clbColumns.ItemCheck += ClbColumns_ItemCheck;
+
+            Text += " - Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
         }
 
         private void SetColumnWidth()
@@ -552,11 +563,18 @@ namespace VATSIMHoursCompiler
 
         private void BtnGet_Click(object sender, EventArgs e)
         {
-            StartProgressBar();
-            bgwMembers.RunWorkerAsync();
+            if (bgwAPI.IsBusy)
+            {
+                MessageBox.Show("Already getting data from the VATSIM API.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                StartProgressBar();
+                bgwAPI.RunWorkerAsync();
+            }
         }
 
-        private void BgwMembers_DoWork(object sender, DoWorkEventArgs e)
+        private void BgwAPI_DoWork(object sender, DoWorkEventArgs e)
         {
             e.Result = new bool[] { true, true };
 
@@ -581,7 +599,7 @@ namespace VATSIMHoursCompiler
             }
         }
 
-        private void BgwMembers_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BgwAPI_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (((bool[])e.Result)[0])
             {
@@ -601,7 +619,11 @@ namespace VATSIMHoursCompiler
                 PopulateResults();
             }
 
-            StopProgressBar();
+
+            if (!bgwExport.IsBusy && !bgwSaveProfile.IsBusy && !bgwLoadProfile.IsBusy)
+            {
+                StopProgressBar();
+            }
         }
 
         private void ClbColumns_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -762,50 +784,127 @@ namespace VATSIMHoursCompiler
 
         private void exportDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult result = sfdExport.ShowDialog();
-
-            if (result == DialogResult.OK && sfdExport.FileName != "")
+            if (bgwExport.IsBusy)
             {
-                string export = "";
-
-                export += lvResults.Columns[0].Text;
-
-                for (int i = 1; i < lvResults.Columns.Count; i++)
-                {
-                    export += "," + lvResults.Columns[i].Text;
-                }
-
-                foreach (string[] arr in (List<string[]>)lvResults.Tag)
-                {
-                    export += "\r\n" + arr[0];
-
-                    for (int i = 1; i < arr.Length; i++)
-                    {
-                        export += "," + arr[i];
-                    }
-                }
-
-                File.WriteAllText(sfdExport.FileName, export);
+                MessageBox.Show("Already exporting data.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+            else
+            {
+                DialogResult result = sfdExport.ShowDialog();
+
+                if (result == DialogResult.OK && sfdExport.FileName != "")
+                {
+                    StartProgressBar();
+                    bgwExport.RunWorkerAsync(sfdExport.FileName);
+                }
+
+            }
+        }
+
+        private void BgwExport_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string export = "";
+
+            export += lvResults.Columns[0].Text;
+
+            for (int i = 1; i < lvResults.Columns.Count; i++)
+            {
+                export += "," + lvResults.Columns[i].Text;
+            }
+
+            foreach (string[] arr in (List<string[]>)lvResults.Tag)
+            {
+                export += "\r\n" + arr[0];
+
+                for (int i = 1; i < arr.Length; i++)
+                {
+                    export += "," + arr[i];
+                }
+            }
+
+            File.WriteAllText((string)e.Argument, export);
+        }
+
+        private void BgwExport_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (!bgwAPI.IsBusy && !bgwSaveProfile.IsBusy && !bgwLoadProfile.IsBusy)
+            {
+                StopProgressBar();
+            }
+
+            MessageBox.Show("Export completed successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void saveProfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult result = sfdProfile.ShowDialog();
-
-            if (result == DialogResult.OK && sfdProfile.FileName != "")
+            if (bgwLoadProfile.IsBusy)
             {
-                XMLSerial.Save(sfdProfile.FileName);
+                MessageBox.Show("Currently loading another profile. Please try again later.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+            else if (bgwSaveProfile.IsBusy)
+            {
+                MessageBox.Show("Already saving profile.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                DialogResult result = sfdProfile.ShowDialog();
+
+                if (result == DialogResult.OK && sfdProfile.FileName != "")
+                {
+                    StartProgressBar();
+                    bgwSaveProfile.RunWorkerAsync(sfdProfile.FileName);
+                }
+            }
+        }
+
+        private void BgwSaveProfile_DoWork(object sender, DoWorkEventArgs e)
+        {
+            XMLSerial.Save((string)e.Argument);
+        }
+
+        private void BgwSaveProfile_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (!bgwAPI.IsBusy && !bgwExport.IsBusy && !bgwLoadProfile.IsBusy)
+            {
+                StopProgressBar();
+            }
+
+            MessageBox.Show("Profile saved successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void loadProfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult result = ofdProfile.ShowDialog();
-
-            if (result == DialogResult.OK && ofdProfile.FileName != "")
+            if (bgwLoadProfile.IsBusy)
             {
-                XMLSerial.Load(ofdProfile.FileName);
+                MessageBox.Show("Already loading profile.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (bgwSaveProfile.IsBusy)
+            {
+                MessageBox.Show("Currently saving the open profile. Please try again later.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                DialogResult result = ofdProfile.ShowDialog();
+
+                if (result == DialogResult.OK && ofdProfile.FileName != "")
+                {
+                    StartProgressBar();
+                    bgwLoadProfile.RunWorkerAsync(ofdProfile.FileName);
+                }
+            }
+
+        }
+
+        private void BgwLoadProfile_DoWork(object sender, DoWorkEventArgs e)
+        {
+            XMLSerial.Load((string)e.Argument);
+        }
+
+        private void BgwLoadProfile_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (!bgwAPI.IsBusy && !bgwExport.IsBusy && !bgwSaveProfile.IsBusy)
+            {
+                StopProgressBar();
             }
 
             lvMembers.Items.Clear();
@@ -846,6 +945,8 @@ namespace VATSIMHoursCompiler
             ResizeListViewColumns(lvPositions);
 
             PopulateColumnsSelector();
+
+            //MessageBox.Show("Profile loaded successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void PopulateColumnsSelector()

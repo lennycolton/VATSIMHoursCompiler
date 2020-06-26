@@ -96,7 +96,7 @@
             this.chResultsBlank = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.BtnGet = new System.Windows.Forms.Button();
             this.BtnRefilter = new System.Windows.Forms.Button();
-            this.bgwMembers = new System.ComponentModel.BackgroundWorker();
+            this.bgwAPI = new System.ComponentModel.BackgroundWorker();
             this.ssBottom = new System.Windows.Forms.StatusStrip();
             this.pbStatus = new System.Windows.Forms.ToolStripProgressBar();
             this.tscMain = new System.Windows.Forms.ToolStripContainer();
@@ -108,6 +108,9 @@
             this.sfdProfile = new System.Windows.Forms.SaveFileDialog();
             this.ofdProfile = new System.Windows.Forms.OpenFileDialog();
             this.tssCopyright = new System.Windows.Forms.ToolStripStatusLabel();
+            this.bgwExport = new System.ComponentModel.BackgroundWorker();
+            this.bgwLoadProfile = new System.ComponentModel.BackgroundWorker();
+            this.bgwSaveProfile = new System.ComponentModel.BackgroundWorker();
             this.tbcMain.SuspendLayout();
             this.tbpSetup.SuspendLayout();
             this.tlpSetupPage.SuspendLayout();
@@ -972,7 +975,7 @@
             // tssCopyright
             // 
             this.tssCopyright.Name = "tssCopyright";
-            this.tssCopyright.Size = new System.Drawing.Size(652, 17);
+            this.tssCopyright.Size = new System.Drawing.Size(683, 17);
             this.tssCopyright.Spring = true;
             this.tssCopyright.Text = "© 2020 Lenny Colton - All Rights Reserved";
             this.tssCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1037,7 +1040,7 @@
         private System.Windows.Forms.ListView lvResults;
         private System.Windows.Forms.ColumnHeader chResultsCID;
         private System.Windows.Forms.ColumnHeader chResultsName;
-        private System.ComponentModel.BackgroundWorker bgwMembers;
+        private System.ComponentModel.BackgroundWorker bgwAPI;
         private System.Windows.Forms.TabPage tbpSetup;
         private System.Windows.Forms.TableLayoutPanel tlpSetupPage;
         private System.Windows.Forms.GroupBox gbDetails;
@@ -1106,6 +1109,9 @@
         private System.Windows.Forms.SaveFileDialog sfdProfile;
         private System.Windows.Forms.OpenFileDialog ofdProfile;
         private System.Windows.Forms.ToolStripStatusLabel tssCopyright;
+        private System.ComponentModel.BackgroundWorker bgwExport;
+        private System.ComponentModel.BackgroundWorker bgwLoadProfile;
+        private System.ComponentModel.BackgroundWorker bgwSaveProfile;
     }
 }
 
