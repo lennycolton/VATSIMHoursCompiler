@@ -3,34 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace VATSIMHoursCompiler
 {
-    class Member
+    [Serializable()]
+    public class Member
     {
+        [XmlIgnore()]
         public static readonly string[] ratings = { "", "OBS", "S1", "S2", "S3", "C1", "C2", "C3", "I1", "I2", "I3", "SUP", "ADM" };
 
+        [XmlIgnore()]
         public static List<Member> list = new List<Member>();
 
-        public int intCID { get; private set; }
+        [XmlElement("CID")]
+        public int intCID { get; set; }
+
+        [XmlElement("Name")]
         public string strName { get; set; }
+
+        [XmlElement("Rating")]
         public int intRating { get; set; }
 
-        public List<Record> listRecords { get; set; }
+        [XmlIgnore()]
+        public List<Record> listRecords { get; set; } = new List<Record>();
 
-        public List<JsonResult> listJsonCs { get; set; }
-        public List<JsonResult> listJsonPre { get; set; }
-        public List<JsonResult> listJsonSuf { get; set; }
+        [XmlIgnore()]
+        public List<JsonResult> listJsonCs { get; set; } = new List<JsonResult>();
+
+        [XmlIgnore()]
+        public List<JsonResult> listJsonPre { get; set; } = new List<JsonResult>();
+
+        [XmlIgnore()]
+        public List<JsonResult> listJsonSuf { get; set; } = new List<JsonResult>();
 
         public Member(int _cid)
         {
             intCID = _cid;
             strName = "";
             intRating = 0;
-            listRecords = new List<Record>();
-            listJsonCs = new List<JsonResult>();
-            listJsonPre = new List<JsonResult>();
-            listJsonSuf = new List<JsonResult>();
         }
 
         public Member(int _cid, string _name, int _rating)
@@ -38,10 +49,23 @@ namespace VATSIMHoursCompiler
             intCID = _cid;
             strName = _name;
             intRating = _rating;
-            listRecords = new List<Record>();
-            listJsonCs = new List<JsonResult>();
-            listJsonPre = new List<JsonResult>();
-            listJsonSuf = new List<JsonResult>();
+        }
+
+        public Member () { }
+
+        public static Member Add(int _cid)
+        {
+            foreach (Member mem in list)
+            {
+                if (mem.intCID == _cid)
+                {
+                    return null;
+                }
+            }
+
+            Member memNew = new Member(_cid);
+            list.Add(memNew);
+            return memNew;
         }
     }
 }

@@ -4,10 +4,11 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace VATSIMHoursCompiler
 {
-    class JsonRecord
+    public class JsonRecord
     {
         [JsonPropertyName("next")]
         public string next { get; set; }
@@ -99,7 +100,7 @@ namespace VATSIMHoursCompiler
                 mem.listRecords.Add(rcdNew);
             }
 
-            mem.listRecords = Record.Sort(mem.listRecords);
+            //mem.listRecords = Record.Sort(mem.listRecords);
         }
 
         private static List<JsonRecord> PullSessions(int _cid)
@@ -118,7 +119,7 @@ namespace VATSIMHoursCompiler
         }
     }
 
-    class JsonResult
+    public class JsonResult
     {
         [JsonPropertyName("callsign")]
         public string cs { get; set; }
@@ -455,7 +456,7 @@ namespace VATSIMHoursCompiler
         }
     }
 
-    class JsonMember
+    public class JsonMember
     {
         [JsonPropertyName("name_first")]
         public string first { get; set; }
@@ -482,16 +483,9 @@ namespace VATSIMHoursCompiler
 
         private static JsonMember Create(int _cid)
         {
-            try
-            {
-                WebClient wct = new WebClient();
-                string strJson = wct.DownloadString("https://api.vatsim.net/api/ratings/" + _cid + "/?format=json");
-                return JsonSerializer.Deserialize<JsonMember>(strJson);
-            }
-            catch
-            {
-                return null;
-            }
+            WebClient wct = new WebClient();
+            string strJson = wct.DownloadString("https://api.vatsim.net/api/ratings/" + _cid + "/?format=json");
+            return JsonSerializer.Deserialize<JsonMember>(strJson);
         }
     }
 }

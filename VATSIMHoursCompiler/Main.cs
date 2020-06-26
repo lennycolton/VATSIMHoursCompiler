@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,8 +62,12 @@ namespace VATSIMHoursCompiler
 
             if (int.TryParse(TxtMemCID.Text, out cid))
             {
-                Member memTemp = new Member(cid);
-                Member.list.Add(memTemp);
+                Member memTemp = Member.Add(cid);
+
+                if (memTemp == null)
+                {
+                    MessageBox.Show("Member has already been added.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
 
                 ListViewItem lviTemp = new ListViewItem(new string[] { cid.ToString(), memTemp.strName, Member.ratings[memTemp.intRating] });
                 lviTemp.Tag = memTemp;
@@ -96,8 +101,7 @@ namespace VATSIMHoursCompiler
 
         private void BtnPosAdd_Click(object sender, EventArgs e)
         {
-            Position posTemp = new Position(TxtPosName.Text, null);
-            Position.list.Add(posTemp);
+            Position posTemp = Position.Add(TxtPosName.Text, null);
 
             string parent = "";
 
@@ -140,7 +144,37 @@ namespace VATSIMHoursCompiler
                 }
 
                 Position.list.Remove(posTemp);
-                lvPositions.Items.Remove(lvPositions.SelectedItems[0]);
+
+                if (posTemp.posParent == null)
+                {
+                    Position.listRoot.Remove(posTemp);
+                }
+                else
+                {
+                    posTemp.posParent.listChildren.Remove(posTemp);
+                }
+
+                foreach (Position pos in posTemp.listChildren)
+                {
+                    pos.posParent = null;
+                }
+
+                lvPositions.SelectedItems.Clear();
+                lvPositions.Items.Clear();
+
+                foreach (Position pos in Position.list)
+                {
+                    string parent = "";
+
+                    if (pos.posParent != null)
+                    {
+                        parent = pos.posParent.strName;
+                    }
+
+                    ListViewItem lviTemp = new ListViewItem(new string[] { pos.strName, parent, pos.listConditions.Count.ToString() });
+                    lviTemp.Tag = pos;
+                    lvPositions.Items.Add(lviTemp);
+                }
 
                 ResizeListViewColumns(lvPositions);
             }
@@ -157,9 +191,11 @@ namespace VATSIMHoursCompiler
                 cbDetParent.Items.Clear();
                 cbDetParent.Items.Add(new ComboBoxItem("(none)", null));
 
+                List<Position> descendents = posTemp.FindDescendents();
+
                 foreach (ListViewItem lvi in lvPositions.Items)
                 {
-                    if (lvi != lvPositions.SelectedItems[0] && !posTemp.listChildren.Contains((Position)lvi.Tag))
+                    if (lvi != lvPositions.SelectedItems[0] && !descendents.Contains((Position)lvi.Tag))
                     {
                         Position pos = (Position)lvi.Tag;
 
@@ -215,7 +251,7 @@ namespace VATSIMHoursCompiler
                     }
 
                     ListViewItem lviTemp = new ListViewItem(strData);
-                    lviTemp.Tag = i;
+                    lviTemp.Tag = con.intID;
                     lvConditions.Items.Add(lviTemp);
                 }
 
@@ -234,7 +270,7 @@ namespace VATSIMHoursCompiler
             if (lvConditions.SelectedItems.Count > 0)
             {
                 int conid = (int)lvConditions.SelectedItems[0].Tag;
-                Condition con = ((Position)lvPositions.SelectedItems[0].Tag).listConditions[conid];
+                Condition con = Condition.Find((Position)lvPositions.SelectedItems[0].Tag, conid);
 
                 TxtConName.Text = con.strName;
 
@@ -312,11 +348,11 @@ namespace VATSIMHoursCompiler
 
         private void BtnConAdd_Click(object sender, EventArgs e)
         {
-            Condition con = new Condition("");
+            Condition con = Condition.Create("");
             ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Add(con);
 
             ListViewItem lviTemp = new ListViewItem(new string[] { "", "None", "" });
-            lviTemp.Tag = ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Count - 1;
+            lviTemp.Tag = con.intID;
             lvConditions.Items.Add(lviTemp);
 
             lvConditions.SelectedItems.Clear();
@@ -331,7 +367,8 @@ namespace VATSIMHoursCompiler
         {
             if (lvConditions.SelectedItems.Count > 0)
             {
-                ((Position)lvPositions.SelectedItems[0].Tag).listConditions.RemoveAt((int)lvConditions.SelectedItems[0].Tag);
+                ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Remove(Condition.Find((Position)lvPositions.SelectedItems[0].Tag, (int)lvConditions.SelectedItems[0].Tag));
+
                 lvConditions.Items.Remove(lvConditions.SelectedItems[0]);
                 lvPositions.SelectedItems[0].SubItems[2].Text = ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Count.ToString();
 
@@ -427,14 +464,14 @@ namespace VATSIMHoursCompiler
                     strType = "Prefix";
                     strValue = TxtCon1.Text;
 
-                    con = new PreCondition(strName, strValue);
+                    con = new PreCondition(conid, strName, strValue);
                     break;
 
                 case "Suffix Only":
                     strType = "Suffix";
                     strValue = TxtCon1.Text;
 
-                    con = new SufCondition(strName, strValue);
+                    con = new SufCondition(conid, strName, strValue);
                     break;
 
                 case "Prefix and Suffix":
@@ -444,28 +481,30 @@ namespace VATSIMHoursCompiler
                     string str2 = TxtCon2.Text;
                     strValue = TxtCon1.Text + "/" + TxtCon2.Text;
 
-                    con = new PreSufCondition(strName, str1, str2);
+                    con = new PreSufCondition(conid, strName, str1, str2);
                     break;
 
                 case "Specific Callsign":
                     strType = "Callsign";
                     strValue = TxtCon1.Text;
 
-                    con = new CsCondition(strName, strValue);
+                    con = new CsCondition(conid, strName, strValue);
                     break;
 
                 default:
-                    con = new Condition("");
+                    con = new Condition(conid, "");
                     break;
             }
 
-            ((Position)lvPositions.SelectedItems[0].Tag).listConditions[conid] = con;
+            Position pos = (Position)lvPositions.SelectedItems[0].Tag;
+
+            pos.listConditions[pos.listConditions.IndexOf(Condition.Find(pos, conid))] = con;
 
             lvConditions.SelectedItems[0].SubItems[0].Text = strName;
             lvConditions.SelectedItems[0].SubItems[1].Text = strType;
             lvConditions.SelectedItems[0].SubItems[2].Text = strValue;
 
-            lvPositions.SelectedItems[0].SubItems[2].Text = ((Position)lvPositions.SelectedItems[0].Tag).listConditions.Count.ToString();
+            lvPositions.SelectedItems[0].SubItems[2].Text = pos.listConditions.Count.ToString();
 
             ResizeListViewColumns(lvConditions);
         }
@@ -473,68 +512,30 @@ namespace VATSIMHoursCompiler
         private void BtnDetSave_Click(object sender, EventArgs e)
         {
             Position pos = (Position)lvPositions.SelectedItems[0].Tag;
-            Position oldparent = pos.posParent;
-
             pos.strName = TxtDetName.Text;
 
-            Position parent = (Position)((ComboBoxItem)cbDetParent.SelectedItem).Value;
-
-            if (oldparent != null)
-            {
-                oldparent.listChildren.Remove(pos);
-            }
-
-            pos.posParent = parent;
-
-            string strParent = "";
-
-            if (parent != null)
-            {
-                parent.listChildren.Add(pos);
-                strParent = parent.strName;
-            }
-
             lvPositions.SelectedItems[0].SubItems[0].Text = pos.strName;
-            lvPositions.SelectedItems[0].SubItems[1].Text = strParent;
-
             ResizeListViewColumns(lvPositions);
 
-            if (clbColumns.Tag == oldparent)
+            if (clbColumns.Tag == pos.posParent)
             {
-                for (int i = clbColumns.Items.Count - 1; i >= 0; i--)
+                foreach (ComboBoxItem cbi in clbColumns.Items)
                 {
-                    if (((ComboBoxItem)clbColumns.Items[i]).Value == pos)
+                    if (((Position)cbi.Value) == pos)
                     {
-                        if (parent == oldparent)
-                        {
-                            ((ComboBoxItem)clbColumns.Items[i]).Text = pos.strName;
-                        }
-                        else
-                        {
-                            clbColumns.Items.RemoveAt(i);
-                        }
+                        cbi.Text = pos.strName;
                     }
                 }
-            }
-            else if (clbColumns.Tag == parent)
-            {
-                clbColumns.Items.Add(new ComboBoxItem(pos.strName, pos));
             }
         }
 
         private void BtnParent_Click(object sender, EventArgs e)
         {
-            clbColumns.Tag = ((Position)clbColumns.Tag).posParent;
-
-            clbColumns.Items.Clear();
-
-            foreach (Position pos in Position.list)
+            if (clbColumns.Tag != null)
             {
-                if (pos.posParent == (Position)clbColumns.Tag)
-                {
-                    clbColumns.Items.Add(new ComboBoxItem(pos.strName, pos));
-                    clbColumns.SetItemChecked(clbColumns.Items.Count - 1, pos.isShown);
-                }
+                clbColumns.Tag = ((Position)clbColumns.Tag).posParent;
+
+                PopulateColumnsSelector();
             }
         }
 
@@ -544,16 +545,7 @@ namespace VATSIMHoursCompiler
             {
                 clbColumns.Tag = ((ComboBoxItem)clbColumns.SelectedItem).Value;
 
-                clbColumns.Items.Clear();
-
-                foreach (Position pos in Position.list)
-                {
-                    if (pos.posParent == (Position)clbColumns.Tag)
-                    {
-                        clbColumns.Items.Add(new ComboBoxItem(pos.strName, pos));
-                        clbColumns.SetItemChecked(clbColumns.Items.Count - 1, pos.isShown);
-                    }
-                }
+                PopulateColumnsSelector();
 
             }
         }
@@ -566,23 +558,49 @@ namespace VATSIMHoursCompiler
 
         private void BgwMembers_DoWork(object sender, DoWorkEventArgs e)
         {
-            JsonMember.PullAll();
-            JsonRecord.PullAll();
+            e.Result = new bool[] { true, true };
+
+            try
+            {
+                JsonMember.PullAll();
+            }
+            catch
+            {
+                ((bool[])e.Result)[0] = false;
+                MessageBox.Show("There was an error while accessing the VATSIM Member Data API.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            try
+            {
+                JsonRecord.PullAll();
+            }
+            catch
+            {
+                ((bool[])e.Result)[1] = false;
+                MessageBox.Show("There was an error while accessing the VATSIM Statistics API. Note that the API will always fail if one of the requested members is currently online.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void BgwMembers_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            foreach (ListViewItem lvi in lvMembers.Items)
+            if (((bool[])e.Result)[0])
             {
-                Member mem = (Member)lvi.Tag;
+                foreach (ListViewItem lvi in lvMembers.Items)
+                {
+                    Member mem = (Member)lvi.Tag;
 
-                lvi.SubItems[1].Text = mem.strName;
-                lvi.SubItems[2].Text = Member.ratings[mem.intRating];
+                    lvi.SubItems[1].Text = mem.strName;
+                    lvi.SubItems[2].Text = Member.ratings[mem.intRating];
+                }
+
+                ResizeListViewColumns(lvMembers);
             }
 
-            ResizeListViewColumns(lvMembers);
+            if (((bool[])e.Result)[1])
+            {
+                PopulateResults();
+            }
 
-            PopulateResults();
             StopProgressBar();
         }
 
@@ -616,13 +634,10 @@ namespace VATSIMHoursCompiler
             PopulateResults();
         }
 
-        private void BtnExport_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void PopulateResults()
         {
+            List<string[]> listResults = new List<string[]>();
+
             lvResults.Items.Clear();
 
             ColumnHeader chCID = lvResults.Columns[0];
@@ -655,7 +670,7 @@ namespace VATSIMHoursCompiler
                 {
                     Position pos = (Position)lvResults.Columns[i].Tag;
 
-                    Record rcd = Record.Find(mem.listRecords, pos.strName);
+                    Record rcd = Record.Find(mem.listRecords, pos.intID);
 
                     if (rcd == null)
                     {
@@ -669,7 +684,10 @@ namespace VATSIMHoursCompiler
                     }
                 }
 
-                ListViewItem lviTemp = new ListViewItem(data.ToArray());
+                string[] arrData = data.ToArray();
+                listResults.Add(arrData);
+
+                ListViewItem lviTemp = new ListViewItem(arrData);
 
                 if (mem.intCID == 1332038)
                 {
@@ -679,7 +697,178 @@ namespace VATSIMHoursCompiler
                 lvResults.Items.Add(lviTemp);
             }
 
+            lvResults.Tag = listResults;
+
             ResizeListViewColumns(lvResults);
+        }
+
+        private void cbDetParent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Position pos = (Position)lvPositions.SelectedItems[0].Tag;
+            Position oldparent = pos.posParent;
+
+            Position parent = (Position)((ComboBoxItem)cbDetParent.SelectedItem).Value;
+
+            if (oldparent == null)
+            {
+                Position.listRoot.Remove(pos);
+            }
+            else
+            {
+                oldparent.listChildren.Remove(pos);
+            }
+
+            pos.posParent = parent;
+
+            string strParent = "";
+
+            if (parent == null)
+            {
+                Position.listRoot.Add(pos);
+            }
+            else
+            {
+                parent.listChildren.Add(pos);
+                strParent = parent.strName;
+            }
+
+            lvPositions.SelectedItems[0].SubItems[0].Text = pos.strName;
+            lvPositions.SelectedItems[0].SubItems[1].Text = strParent;
+
+            ResizeListViewColumns(lvPositions);
+
+            if (clbColumns.Tag == oldparent)
+            {
+                for (int i = clbColumns.Items.Count - 1; i >= 0; i--)
+                {
+                    if (((ComboBoxItem)clbColumns.Items[i]).Value == pos)
+                    {
+                        if (parent == oldparent)
+                        {
+                            ((ComboBoxItem)clbColumns.Items[i]).Text = pos.strName;
+                        }
+                        else
+                        {
+                            clbColumns.Items.RemoveAt(i);
+                        }
+                    }
+                }
+            }
+            else if (clbColumns.Tag == parent)
+            {
+                clbColumns.Items.Add(new ComboBoxItem(pos.strName, pos));
+            }
+        }
+
+        private void exportDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = sfdExport.ShowDialog();
+
+            if (result == DialogResult.OK && sfdExport.FileName != "")
+            {
+                string export = "";
+
+                export += lvResults.Columns[0].Text;
+
+                for (int i = 1; i < lvResults.Columns.Count; i++)
+                {
+                    export += "," + lvResults.Columns[i].Text;
+                }
+
+                foreach (string[] arr in (List<string[]>)lvResults.Tag)
+                {
+                    export += "\r\n" + arr[0];
+
+                    for (int i = 1; i < arr.Length; i++)
+                    {
+                        export += "," + arr[i];
+                    }
+                }
+
+                File.WriteAllText(sfdExport.FileName, export);
+            }
+        }
+
+        private void saveProfileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = sfdProfile.ShowDialog();
+
+            if (result == DialogResult.OK && sfdProfile.FileName != "")
+            {
+                XMLSerial.Save(sfdProfile.FileName);
+            }
+        }
+
+        private void loadProfileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = ofdProfile.ShowDialog();
+
+            if (result == DialogResult.OK && ofdProfile.FileName != "")
+            {
+                XMLSerial.Load(ofdProfile.FileName);
+            }
+
+            lvMembers.Items.Clear();
+            lvPositions.Items.Clear();
+
+            tlpDetails.Hide();
+            tlpConditions.Hide();
+
+            foreach (Member mem in Member.list)
+            {
+                ListViewItem lviTemp = new ListViewItem(new string[] { mem.intCID.ToString(), mem.strName, Member.ratings[mem.intRating] });
+                lviTemp.Tag = mem;
+
+                if (mem.intCID == 1332038)
+                {
+                    lviTemp.Font = new Font("Comic Sans MS", lviTemp.Font.Size);
+                }
+
+                lvMembers.Items.Add(lviTemp);
+            }
+
+            ResizeListViewColumns(lvMembers);
+
+            foreach (Position pos in Position.list)
+            {
+                string parent = "";
+
+                if (pos.posParent != null)
+                {
+                    parent = pos.posParent.strName;
+                }
+
+                ListViewItem lviTemp = new ListViewItem(new string[] { pos.strName, parent, pos.listConditions.Count.ToString() });
+                lviTemp.Tag = pos;
+                lvPositions.Items.Add(lviTemp);
+            }
+
+            ResizeListViewColumns(lvPositions);
+
+            PopulateColumnsSelector();
+        }
+
+        private void PopulateColumnsSelector()
+        {
+            clbColumns.Items.Clear();
+
+            foreach (Position pos in Position.list)
+            {
+                if (pos.posParent == (Position)clbColumns.Tag)
+                {
+                    clbColumns.Items.Add(new ComboBoxItem(pos.strName, pos));
+                    clbColumns.SetItemChecked(clbColumns.Items.Count - 1, pos.isShown);
+                }
+            }
+
+            if (clbColumns.Tag == null)
+            {
+                LblColumns.Text = "";
+            }
+            else
+            {
+                LblColumns.Text = "Parent:\n" + ((Position)clbColumns.Tag).strName;
+            }
         }
     }
 }

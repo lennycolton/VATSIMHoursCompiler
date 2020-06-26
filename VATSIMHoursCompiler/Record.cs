@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VATSIMHoursCompiler
 {
-    class Record
+    public class Record
     {
         public Member memMember { get; }
         public Position posPosition { get; }
@@ -25,7 +25,7 @@ namespace VATSIMHoursCompiler
 
             foreach (Position child in posPosition.listChildren)
             {
-                Record rcd = Find(memMember.listRecords, child.strName);
+                Record rcd = Find(memMember.listRecords, child.intID);
 
                 decReturn += rcd.MinsWithChildren();
             }
@@ -33,7 +33,7 @@ namespace VATSIMHoursCompiler
             return decReturn;
         }
 
-        public static Record Find(List<Record> _list, string _pos)
+        public static Record Find(List<Record> _list, int _pos)
         {
             //Create field
             Record rcdCurrent = null;
@@ -42,6 +42,11 @@ namespace VATSIMHoursCompiler
             int intMidpoint;
             int intMin = 0;
             int intMax = _list.Count - 1;
+
+            if (intMax < 0)
+            {
+                return null;
+            }
 
             do
             {
@@ -52,17 +57,17 @@ namespace VATSIMHoursCompiler
                 rcdCurrent = _list[intMidpoint];
 
                 //Return if search term found
-                if (string.Compare(rcdCurrent.posPosition.strName, _pos) == 0)
+                if (rcdCurrent.posPosition.intID == _pos)
                 {
                     return rcdCurrent;
                 }
                 //Set new minimum if current is too low
-                else if (string.Compare(rcdCurrent.posPosition.strName, _pos) < 0)
+                else if (rcdCurrent.posPosition.intID < _pos)
                 {
                     intMin = intMidpoint + 1;
                 }
                 //Set new maximum if current is too high
-                else if (string.Compare(rcdCurrent.posPosition.strName, _pos) > 0)
+                else if (rcdCurrent.posPosition.intID > _pos)
                 {
                     intMax = intMidpoint - 1;
                 }
@@ -107,7 +112,7 @@ namespace VATSIMHoursCompiler
             {
                 if (_left.Count > 0 && _right.Count > 0)
                 {
-                    if (string.Compare(_left[0].posPosition.strName, _right[0].posPosition.strName) <= 0)
+                    if (_left[0].posPosition.intID <= _right[0].posPosition.intID)
                     {
                         sorted.Add(_left[0]);
                         _left.Remove(_left[0]);
