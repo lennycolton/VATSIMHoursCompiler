@@ -58,15 +58,15 @@ namespace VATSIMHoursCompiler
                 {
                     if (con is PreCondition)
                     {
-                        listFind.AddRange(JsonResult.FindPre(mem.listJsonCs, ((PreCondition)con).strPre));
+                        listFind.AddRange(JsonResult.FindPre(mem.listJsonPre, ((PreCondition)con).strPre));
                     }
                     else if (con is SufCondition)
                     {
-                        listFind.AddRange(JsonResult.FindSuf(mem.listJsonCs, ((SufCondition)con).strSuf));
+                        listFind.AddRange(JsonResult.FindSuf(mem.listJsonSuf, ((SufCondition)con).strSuf));
                     }
                     else if (con is PreSufCondition)
                     {
-                        List<JsonResult> listTempFind = JsonResult.FindPre(mem.listJsonCs, ((PreSufCondition)con).strPre);
+                        List<JsonResult> listTempFind = JsonResult.FindPre(mem.listJsonPre, ((PreSufCondition)con).strPre);
 
                         for (int i = listTempFind.Count - 1; i >= 0; i--)
                         {
@@ -80,7 +80,7 @@ namespace VATSIMHoursCompiler
                     }
                     else if (con is CsCondition)
                     {
-                        JsonResult jsrTemp = JsonResult.FindCs(mem.listJsonCs, ((CsCondition)con).strName);
+                        JsonResult jsrTemp = JsonResult.FindCs(mem.listJsonCs, ((CsCondition)con).strCs);
 
                         if (jsrTemp != null)
                         {

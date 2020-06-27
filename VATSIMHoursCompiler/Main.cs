@@ -656,7 +656,7 @@ namespace VATSIMHoursCompiler
             PopulateResults();
         }
 
-        private void PopulateResults()
+        private void PopulateResults()  
         {
             List<string[]> listResults = new List<string[]>();
 
