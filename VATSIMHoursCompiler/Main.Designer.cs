@@ -84,9 +84,9 @@
             this.tlpResultsPage = new System.Windows.Forms.TableLayoutPanel();
             this.gbColumns = new System.Windows.Forms.GroupBox();
             this.tlpColumns = new System.Windows.Forms.TableLayoutPanel();
-            this.clbColumns = new System.Windows.Forms.CheckedListBox();
             this.BtnChildren = new System.Windows.Forms.Button();
             this.BtnParent = new System.Windows.Forms.Button();
+            this.clbColumns = new System.Windows.Forms.CheckedListBox();
             this.LblColumns = new System.Windows.Forms.Label();
             this.gbResults = new System.Windows.Forms.GroupBox();
             this.tlpResults = new System.Windows.Forms.TableLayoutPanel();
@@ -99,6 +99,7 @@
             this.bgwAPI = new System.ComponentModel.BackgroundWorker();
             this.ssBottom = new System.Windows.Forms.StatusStrip();
             this.pbStatus = new System.Windows.Forms.ToolStripProgressBar();
+            this.tssCopyright = new System.Windows.Forms.ToolStripStatusLabel();
             this.tscMain = new System.Windows.Forms.ToolStripContainer();
             this.msMenu = new System.Windows.Forms.MenuStrip();
             this.loadProfileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,10 +108,17 @@
             this.sfdExport = new System.Windows.Forms.SaveFileDialog();
             this.sfdProfile = new System.Windows.Forms.SaveFileDialog();
             this.ofdProfile = new System.Windows.Forms.OpenFileDialog();
-            this.tssCopyright = new System.Windows.Forms.ToolStripStatusLabel();
             this.bgwExport = new System.ComponentModel.BackgroundWorker();
             this.bgwLoadProfile = new System.ComponentModel.BackgroundWorker();
             this.bgwSaveProfile = new System.ComponentModel.BackgroundWorker();
+            this.gbDate = new System.Windows.Forms.GroupBox();
+            this.tlpDate = new System.Windows.Forms.TableLayoutPanel();
+            this.LblDatStart = new System.Windows.Forms.Label();
+            this.LblDatEnd = new System.Windows.Forms.Label();
+            this.dtpDatStart = new System.Windows.Forms.DateTimePicker();
+            this.dtpDatEnd = new System.Windows.Forms.DateTimePicker();
+            this.cbDatStart = new System.Windows.Forms.CheckBox();
+            this.cbDatEnd = new System.Windows.Forms.CheckBox();
             this.tbcMain.SuspendLayout();
             this.tbpSetup.SuspendLayout();
             this.tlpSetupPage.SuspendLayout();
@@ -134,6 +142,8 @@
             this.tscMain.TopToolStripPanel.SuspendLayout();
             this.tscMain.SuspendLayout();
             this.msMenu.SuspendLayout();
+            this.gbDate.SuspendLayout();
+            this.tlpDate.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcMain
@@ -167,14 +177,15 @@
             this.tlpSetupPage.Controls.Add(this.gbPositions, 1, 0);
             this.tlpSetupPage.Controls.Add(this.gbMembers, 0, 0);
             this.tlpSetupPage.Controls.Add(this.gbCondition, 0, 1);
+            this.tlpSetupPage.Controls.Add(this.gbDate, 0, 2);
             this.tlpSetupPage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpSetupPage.Location = new System.Drawing.Point(3, 3);
             this.tlpSetupPage.Margin = new System.Windows.Forms.Padding(0);
             this.tlpSetupPage.Name = "tlpSetupPage";
-            this.tlpSetupPage.RowCount = 2;
+            this.tlpSetupPage.RowCount = 3;
             this.tlpSetupPage.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpSetupPage.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 164F));
-            this.tlpSetupPage.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpSetupPage.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 77F));
             this.tlpSetupPage.Size = new System.Drawing.Size(786, 447);
             this.tlpSetupPage.TabIndex = 0;
             // 
@@ -182,9 +193,10 @@
             // 
             this.gbDetails.Controls.Add(this.tlpDetails);
             this.gbDetails.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbDetails.Location = new System.Drawing.Point(396, 286);
+            this.gbDetails.Location = new System.Drawing.Point(396, 209);
             this.gbDetails.Name = "gbDetails";
-            this.gbDetails.Size = new System.Drawing.Size(387, 158);
+            this.tlpSetupPage.SetRowSpan(this.gbDetails, 2);
+            this.gbDetails.Size = new System.Drawing.Size(387, 235);
             this.gbDetails.TabIndex = 2;
             this.gbDetails.TabStop = false;
             this.gbDetails.Text = "Position Details";
@@ -213,7 +225,7 @@
             this.tlpDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tlpDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpDetails.Size = new System.Drawing.Size(381, 139);
+            this.tlpDetails.Size = new System.Drawing.Size(381, 216);
             this.tlpDetails.TabIndex = 0;
             this.tlpDetails.Visible = false;
             // 
@@ -256,7 +268,7 @@
             this.LblConditions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LblConditions.Location = new System.Drawing.Point(3, 58);
             this.LblConditions.Name = "LblConditions";
-            this.LblConditions.Size = new System.Drawing.Size(59, 81);
+            this.LblConditions.Size = new System.Drawing.Size(59, 158);
             this.LblConditions.TabIndex = 7;
             this.LblConditions.Text = "Conditions:";
             this.LblConditions.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -275,7 +287,7 @@
             this.lvConditions.Location = new System.Drawing.Point(68, 61);
             this.lvConditions.MultiSelect = false;
             this.lvConditions.Name = "lvConditions";
-            this.lvConditions.Size = new System.Drawing.Size(310, 75);
+            this.lvConditions.Size = new System.Drawing.Size(310, 152);
             this.lvConditions.TabIndex = 8;
             this.lvConditions.UseCompatibleStateImageBehavior = false;
             this.lvConditions.View = System.Windows.Forms.View.Details;
@@ -345,7 +357,7 @@
             this.gbPositions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbPositions.Location = new System.Drawing.Point(396, 3);
             this.gbPositions.Name = "gbPositions";
-            this.gbPositions.Size = new System.Drawing.Size(387, 277);
+            this.gbPositions.Size = new System.Drawing.Size(387, 200);
             this.gbPositions.TabIndex = 1;
             this.gbPositions.TabStop = false;
             this.gbPositions.Text = "Positions";
@@ -369,7 +381,7 @@
             this.tlpPositions.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tlpPositions.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpPositions.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpPositions.Size = new System.Drawing.Size(381, 258);
+            this.tlpPositions.Size = new System.Drawing.Size(381, 181);
             this.tlpPositions.TabIndex = 0;
             // 
             // lvPositions
@@ -386,7 +398,7 @@
             this.lvPositions.Location = new System.Drawing.Point(3, 32);
             this.lvPositions.MultiSelect = false;
             this.lvPositions.Name = "lvPositions";
-            this.lvPositions.Size = new System.Drawing.Size(375, 223);
+            this.lvPositions.Size = new System.Drawing.Size(375, 146);
             this.lvPositions.TabIndex = 4;
             this.lvPositions.UseCompatibleStateImageBehavior = false;
             this.lvPositions.View = System.Windows.Forms.View.Details;
@@ -455,7 +467,7 @@
             this.gbMembers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbMembers.Location = new System.Drawing.Point(3, 3);
             this.gbMembers.Name = "gbMembers";
-            this.gbMembers.Size = new System.Drawing.Size(387, 277);
+            this.gbMembers.Size = new System.Drawing.Size(387, 200);
             this.gbMembers.TabIndex = 0;
             this.gbMembers.TabStop = false;
             this.gbMembers.Text = "Members";
@@ -479,7 +491,7 @@
             this.tlpMembers.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tlpMembers.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMembers.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpMembers.Size = new System.Drawing.Size(381, 258);
+            this.tlpMembers.Size = new System.Drawing.Size(381, 181);
             this.tlpMembers.TabIndex = 0;
             // 
             // LblMemCID
@@ -507,7 +519,7 @@
             this.lvMembers.Location = new System.Drawing.Point(3, 32);
             this.lvMembers.MultiSelect = false;
             this.lvMembers.Name = "lvMembers";
-            this.lvMembers.Size = new System.Drawing.Size(375, 223);
+            this.lvMembers.Size = new System.Drawing.Size(375, 146);
             this.lvMembers.TabIndex = 4;
             this.lvMembers.UseCompatibleStateImageBehavior = false;
             this.lvMembers.View = System.Windows.Forms.View.Details;
@@ -562,7 +574,7 @@
             // 
             this.gbCondition.Controls.Add(this.tlpConditions);
             this.gbCondition.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbCondition.Location = new System.Drawing.Point(3, 286);
+            this.gbCondition.Location = new System.Drawing.Point(3, 209);
             this.gbCondition.Name = "gbCondition";
             this.gbCondition.Size = new System.Drawing.Size(387, 158);
             this.gbCondition.TabIndex = 3;
@@ -755,16 +767,6 @@
             this.tlpColumns.Size = new System.Drawing.Size(162, 422);
             this.tlpColumns.TabIndex = 0;
             // 
-            // clbColumns
-            // 
-            this.tlpColumns.SetColumnSpan(this.clbColumns, 2);
-            this.clbColumns.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.clbColumns.FormattingEnabled = true;
-            this.clbColumns.Location = new System.Drawing.Point(3, 32);
-            this.clbColumns.Name = "clbColumns";
-            this.clbColumns.Size = new System.Drawing.Size(156, 358);
-            this.clbColumns.TabIndex = 1;
-            // 
             // BtnChildren
             // 
             this.BtnChildren.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -786,6 +788,16 @@
             this.BtnParent.Text = "Parent";
             this.BtnParent.UseVisualStyleBackColor = true;
             this.BtnParent.Click += new System.EventHandler(this.BtnParent_Click);
+            // 
+            // clbColumns
+            // 
+            this.tlpColumns.SetColumnSpan(this.clbColumns, 2);
+            this.clbColumns.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clbColumns.FormattingEnabled = true;
+            this.clbColumns.Location = new System.Drawing.Point(3, 32);
+            this.clbColumns.Name = "clbColumns";
+            this.clbColumns.Size = new System.Drawing.Size(156, 358);
+            this.clbColumns.TabIndex = 1;
             // 
             // LblColumns
             // 
@@ -897,6 +909,14 @@
             this.pbStatus.Name = "pbStatus";
             this.pbStatus.Size = new System.Drawing.Size(100, 16);
             // 
+            // tssCopyright
+            // 
+            this.tssCopyright.Name = "tssCopyright";
+            this.tssCopyright.Size = new System.Drawing.Size(683, 17);
+            this.tssCopyright.Spring = true;
+            this.tssCopyright.Text = "© 2020 Lenny Colton - All Rights Reserved";
+            this.tssCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // tscMain
             // 
             // 
@@ -972,13 +992,99 @@
             this.ofdProfile.Filter = "XML|*.xml|All Files|*.*";
             this.ofdProfile.Title = "Load Profile";
             // 
-            // tssCopyright
+            // gbDate
             // 
-            this.tssCopyright.Name = "tssCopyright";
-            this.tssCopyright.Size = new System.Drawing.Size(683, 17);
-            this.tssCopyright.Spring = true;
-            this.tssCopyright.Text = "© 2020 Lenny Colton - All Rights Reserved";
-            this.tssCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.gbDate.Controls.Add(this.tlpDate);
+            this.gbDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbDate.Location = new System.Drawing.Point(3, 373);
+            this.gbDate.Name = "gbDate";
+            this.gbDate.Size = new System.Drawing.Size(387, 71);
+            this.gbDate.TabIndex = 4;
+            this.gbDate.TabStop = false;
+            this.gbDate.Text = "Date Range";
+            // 
+            // tlpDate
+            // 
+            this.tlpDate.ColumnCount = 3;
+            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpDate.Controls.Add(this.cbDatEnd, 2, 1);
+            this.tlpDate.Controls.Add(this.LblDatStart, 0, 0);
+            this.tlpDate.Controls.Add(this.LblDatEnd, 0, 1);
+            this.tlpDate.Controls.Add(this.dtpDatStart, 1, 0);
+            this.tlpDate.Controls.Add(this.dtpDatEnd, 1, 1);
+            this.tlpDate.Controls.Add(this.cbDatStart, 2, 0);
+            this.tlpDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpDate.Location = new System.Drawing.Point(3, 16);
+            this.tlpDate.Name = "tlpDate";
+            this.tlpDate.RowCount = 2;
+            this.tlpDate.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpDate.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpDate.Size = new System.Drawing.Size(381, 52);
+            this.tlpDate.TabIndex = 0;
+            // 
+            // LblDatStart
+            // 
+            this.LblDatStart.AutoSize = true;
+            this.LblDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LblDatStart.Location = new System.Drawing.Point(3, 0);
+            this.LblDatStart.Name = "LblDatStart";
+            this.LblDatStart.Size = new System.Drawing.Size(32, 26);
+            this.LblDatStart.TabIndex = 0;
+            this.LblDatStart.Text = "Start:";
+            this.LblDatStart.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // LblDatEnd
+            // 
+            this.LblDatEnd.AutoSize = true;
+            this.LblDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LblDatEnd.Location = new System.Drawing.Point(3, 26);
+            this.LblDatEnd.Name = "LblDatEnd";
+            this.LblDatEnd.Size = new System.Drawing.Size(32, 26);
+            this.LblDatEnd.TabIndex = 1;
+            this.LblDatEnd.Text = "End:";
+            this.LblDatEnd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // dtpDatStart
+            // 
+            this.dtpDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dtpDatStart.Enabled = false;
+            this.dtpDatStart.Location = new System.Drawing.Point(41, 3);
+            this.dtpDatStart.Name = "dtpDatStart";
+            this.dtpDatStart.Size = new System.Drawing.Size(317, 20);
+            this.dtpDatStart.TabIndex = 2;
+            // 
+            // dtpDatEnd
+            // 
+            this.dtpDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dtpDatEnd.Enabled = false;
+            this.dtpDatEnd.Location = new System.Drawing.Point(41, 29);
+            this.dtpDatEnd.Name = "dtpDatEnd";
+            this.dtpDatEnd.Size = new System.Drawing.Size(317, 20);
+            this.dtpDatEnd.TabIndex = 3;
+            // 
+            // cbDatStart
+            // 
+            this.cbDatStart.AutoSize = true;
+            this.cbDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbDatStart.Location = new System.Drawing.Point(364, 3);
+            this.cbDatStart.Name = "cbDatStart";
+            this.cbDatStart.Size = new System.Drawing.Size(14, 20);
+            this.cbDatStart.TabIndex = 4;
+            this.cbDatStart.UseVisualStyleBackColor = true;
+            this.cbDatStart.CheckedChanged += new System.EventHandler(this.cbDatStart_CheckedChanged);
+            // 
+            // cbDatEnd
+            // 
+            this.cbDatEnd.AutoSize = true;
+            this.cbDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbDatEnd.Location = new System.Drawing.Point(364, 29);
+            this.cbDatEnd.Name = "cbDatEnd";
+            this.cbDatEnd.Size = new System.Drawing.Size(14, 20);
+            this.cbDatEnd.TabIndex = 5;
+            this.cbDatEnd.UseVisualStyleBackColor = true;
+            this.cbDatEnd.CheckedChanged += new System.EventHandler(this.cbDatEnd_CheckedChanged);
             // 
             // Main
             // 
@@ -1024,6 +1130,9 @@
             this.tscMain.PerformLayout();
             this.msMenu.ResumeLayout(false);
             this.msMenu.PerformLayout();
+            this.gbDate.ResumeLayout(false);
+            this.tlpDate.ResumeLayout(false);
+            this.tlpDate.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1112,6 +1221,14 @@
         private System.ComponentModel.BackgroundWorker bgwExport;
         private System.ComponentModel.BackgroundWorker bgwLoadProfile;
         private System.ComponentModel.BackgroundWorker bgwSaveProfile;
+        private System.Windows.Forms.GroupBox gbDate;
+        private System.Windows.Forms.TableLayoutPanel tlpDate;
+        private System.Windows.Forms.CheckBox cbDatEnd;
+        private System.Windows.Forms.Label LblDatStart;
+        private System.Windows.Forms.Label LblDatEnd;
+        private System.Windows.Forms.DateTimePicker dtpDatStart;
+        private System.Windows.Forms.DateTimePicker dtpDatEnd;
+        private System.Windows.Forms.CheckBox cbDatStart;
     }
 }
 

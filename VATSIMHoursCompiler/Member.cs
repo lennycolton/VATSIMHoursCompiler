@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace VATSIMHoursCompiler
@@ -29,13 +26,13 @@ namespace VATSIMHoursCompiler
         public List<Record> listRecords { get; set; } = new List<Record>();
 
         [XmlIgnore()]
-        public List<JsonResult> listJsonCs { get; set; } = new List<JsonResult>();
+        public List<Result> listResCs { get; set; } = new List<Result>();
 
         [XmlIgnore()]
-        public List<JsonResult> listJsonPre { get; set; } = new List<JsonResult>();
+        public List<Result> listResPre { get; set; } = new List<Result>();
 
         [XmlIgnore()]
-        public List<JsonResult> listJsonSuf { get; set; } = new List<JsonResult>();
+        public List<Result> listResSuf { get; set; } = new List<Result>();
 
         public Member(int _cid)
         {

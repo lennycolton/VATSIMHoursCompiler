@@ -590,7 +590,22 @@ namespace VATSIMHoursCompiler
 
             try
             {
-                JsonRecord.PullAll();
+                DateTime dtStart = default(DateTime);
+                DateTime dtEnd = default(DateTime);
+
+                if (dtpDatStart.Enabled)
+                {
+                    dtStart = dtpDatStart.Value;
+                    dtStart = new DateTime(dtStart.Year, dtStart.Month, dtStart.Day, 0, 0, 0);
+                }
+
+                if (dtpDatEnd.Enabled)
+                {
+                    dtEnd = dtpDatEnd.Value;
+                    dtEnd = new DateTime(dtEnd.Year, dtEnd.Month, dtEnd.Day, 23, 59, 59);
+                }
+
+                JsonRecord.PullAll(dtStart, dtEnd);
             }
             catch
             {
@@ -656,7 +671,7 @@ namespace VATSIMHoursCompiler
             PopulateResults();
         }
 
-        private void PopulateResults()  
+        private void PopulateResults()
         {
             List<string[]> listResults = new List<string[]>();
 
@@ -969,6 +984,30 @@ namespace VATSIMHoursCompiler
             else
             {
                 LblColumns.Text = "Parent:\n" + ((Position)clbColumns.Tag).strName;
+            }
+        }
+
+        private void cbDatStart_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbDatStart.Checked)
+            {
+                dtpDatStart.Enabled = true;
+            }
+            else
+            {
+                dtpDatStart.Enabled = false;
+            }
+        }
+
+        private void cbDatEnd_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbDatEnd.Checked)
+            {
+                dtpDatEnd.Enabled = true;
+            }
+            else
+            {
+                dtpDatEnd.Enabled = false;
             }
         }
     }
