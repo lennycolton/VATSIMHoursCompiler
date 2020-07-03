@@ -80,6 +80,14 @@
             this.TxtCon1 = new System.Windows.Forms.TextBox();
             this.LblCon1 = new System.Windows.Forms.Label();
             this.BtnConSave = new System.Windows.Forms.Button();
+            this.gbDate = new System.Windows.Forms.GroupBox();
+            this.tlpDate = new System.Windows.Forms.TableLayoutPanel();
+            this.cbDatEnd = new System.Windows.Forms.CheckBox();
+            this.LblDatStart = new System.Windows.Forms.Label();
+            this.LblDatEnd = new System.Windows.Forms.Label();
+            this.dtpDatStart = new System.Windows.Forms.DateTimePicker();
+            this.dtpDatEnd = new System.Windows.Forms.DateTimePicker();
+            this.cbDatStart = new System.Windows.Forms.CheckBox();
             this.tbpResults = new System.Windows.Forms.TabPage();
             this.tlpResultsPage = new System.Windows.Forms.TableLayoutPanel();
             this.gbColumns = new System.Windows.Forms.GroupBox();
@@ -111,14 +119,6 @@
             this.bgwExport = new System.ComponentModel.BackgroundWorker();
             this.bgwLoadProfile = new System.ComponentModel.BackgroundWorker();
             this.bgwSaveProfile = new System.ComponentModel.BackgroundWorker();
-            this.gbDate = new System.Windows.Forms.GroupBox();
-            this.tlpDate = new System.Windows.Forms.TableLayoutPanel();
-            this.LblDatStart = new System.Windows.Forms.Label();
-            this.LblDatEnd = new System.Windows.Forms.Label();
-            this.dtpDatStart = new System.Windows.Forms.DateTimePicker();
-            this.dtpDatEnd = new System.Windows.Forms.DateTimePicker();
-            this.cbDatStart = new System.Windows.Forms.CheckBox();
-            this.cbDatEnd = new System.Windows.Forms.CheckBox();
             this.tbcMain.SuspendLayout();
             this.tbpSetup.SuspendLayout();
             this.tlpSetupPage.SuspendLayout();
@@ -130,6 +130,8 @@
             this.tlpMembers.SuspendLayout();
             this.gbCondition.SuspendLayout();
             this.tlpConditions.SuspendLayout();
+            this.gbDate.SuspendLayout();
+            this.tlpDate.SuspendLayout();
             this.tbpResults.SuspendLayout();
             this.tlpResultsPage.SuspendLayout();
             this.gbColumns.SuspendLayout();
@@ -142,8 +144,6 @@
             this.tscMain.TopToolStripPanel.SuspendLayout();
             this.tscMain.SuspendLayout();
             this.msMenu.SuspendLayout();
-            this.gbDate.SuspendLayout();
-            this.tlpDate.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbcMain
@@ -707,6 +707,100 @@
             this.BtnConSave.UseVisualStyleBackColor = true;
             this.BtnConSave.Click += new System.EventHandler(this.BtnConSave_Click);
             // 
+            // gbDate
+            // 
+            this.gbDate.Controls.Add(this.tlpDate);
+            this.gbDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbDate.Location = new System.Drawing.Point(3, 373);
+            this.gbDate.Name = "gbDate";
+            this.gbDate.Size = new System.Drawing.Size(387, 71);
+            this.gbDate.TabIndex = 4;
+            this.gbDate.TabStop = false;
+            this.gbDate.Text = "Date Range";
+            // 
+            // tlpDate
+            // 
+            this.tlpDate.ColumnCount = 3;
+            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpDate.Controls.Add(this.cbDatEnd, 2, 1);
+            this.tlpDate.Controls.Add(this.LblDatStart, 0, 0);
+            this.tlpDate.Controls.Add(this.LblDatEnd, 0, 1);
+            this.tlpDate.Controls.Add(this.dtpDatStart, 1, 0);
+            this.tlpDate.Controls.Add(this.dtpDatEnd, 1, 1);
+            this.tlpDate.Controls.Add(this.cbDatStart, 2, 0);
+            this.tlpDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpDate.Location = new System.Drawing.Point(3, 16);
+            this.tlpDate.Name = "tlpDate";
+            this.tlpDate.RowCount = 2;
+            this.tlpDate.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpDate.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpDate.Size = new System.Drawing.Size(381, 52);
+            this.tlpDate.TabIndex = 0;
+            // 
+            // cbDatEnd
+            // 
+            this.cbDatEnd.AutoSize = true;
+            this.cbDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbDatEnd.Location = new System.Drawing.Point(364, 29);
+            this.cbDatEnd.Name = "cbDatEnd";
+            this.cbDatEnd.Size = new System.Drawing.Size(14, 20);
+            this.cbDatEnd.TabIndex = 5;
+            this.cbDatEnd.UseVisualStyleBackColor = true;
+            this.cbDatEnd.CheckedChanged += new System.EventHandler(this.cbDatEnd_CheckedChanged);
+            // 
+            // LblDatStart
+            // 
+            this.LblDatStart.AutoSize = true;
+            this.LblDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LblDatStart.Location = new System.Drawing.Point(3, 0);
+            this.LblDatStart.Name = "LblDatStart";
+            this.LblDatStart.Size = new System.Drawing.Size(32, 26);
+            this.LblDatStart.TabIndex = 0;
+            this.LblDatStart.Text = "Start:";
+            this.LblDatStart.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // LblDatEnd
+            // 
+            this.LblDatEnd.AutoSize = true;
+            this.LblDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LblDatEnd.Location = new System.Drawing.Point(3, 26);
+            this.LblDatEnd.Name = "LblDatEnd";
+            this.LblDatEnd.Size = new System.Drawing.Size(32, 26);
+            this.LblDatEnd.TabIndex = 1;
+            this.LblDatEnd.Text = "End:";
+            this.LblDatEnd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // dtpDatStart
+            // 
+            this.dtpDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dtpDatStart.Enabled = false;
+            this.dtpDatStart.Location = new System.Drawing.Point(41, 3);
+            this.dtpDatStart.Name = "dtpDatStart";
+            this.dtpDatStart.Size = new System.Drawing.Size(317, 20);
+            this.dtpDatStart.TabIndex = 2;
+            // 
+            // dtpDatEnd
+            // 
+            this.dtpDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dtpDatEnd.Enabled = false;
+            this.dtpDatEnd.Location = new System.Drawing.Point(41, 29);
+            this.dtpDatEnd.Name = "dtpDatEnd";
+            this.dtpDatEnd.Size = new System.Drawing.Size(317, 20);
+            this.dtpDatEnd.TabIndex = 3;
+            // 
+            // cbDatStart
+            // 
+            this.cbDatStart.AutoSize = true;
+            this.cbDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbDatStart.Location = new System.Drawing.Point(364, 3);
+            this.cbDatStart.Name = "cbDatStart";
+            this.cbDatStart.Size = new System.Drawing.Size(14, 20);
+            this.cbDatStart.TabIndex = 4;
+            this.cbDatStart.UseVisualStyleBackColor = true;
+            this.cbDatStart.CheckedChanged += new System.EventHandler(this.cbDatStart_CheckedChanged);
+            // 
             // tbpResults
             // 
             this.tbpResults.Controls.Add(this.tlpResultsPage);
@@ -992,100 +1086,6 @@
             this.ofdProfile.Filter = "XML|*.xml|All Files|*.*";
             this.ofdProfile.Title = "Load Profile";
             // 
-            // gbDate
-            // 
-            this.gbDate.Controls.Add(this.tlpDate);
-            this.gbDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbDate.Location = new System.Drawing.Point(3, 373);
-            this.gbDate.Name = "gbDate";
-            this.gbDate.Size = new System.Drawing.Size(387, 71);
-            this.gbDate.TabIndex = 4;
-            this.gbDate.TabStop = false;
-            this.gbDate.Text = "Date Range";
-            // 
-            // tlpDate
-            // 
-            this.tlpDate.ColumnCount = 3;
-            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpDate.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpDate.Controls.Add(this.cbDatEnd, 2, 1);
-            this.tlpDate.Controls.Add(this.LblDatStart, 0, 0);
-            this.tlpDate.Controls.Add(this.LblDatEnd, 0, 1);
-            this.tlpDate.Controls.Add(this.dtpDatStart, 1, 0);
-            this.tlpDate.Controls.Add(this.dtpDatEnd, 1, 1);
-            this.tlpDate.Controls.Add(this.cbDatStart, 2, 0);
-            this.tlpDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpDate.Location = new System.Drawing.Point(3, 16);
-            this.tlpDate.Name = "tlpDate";
-            this.tlpDate.RowCount = 2;
-            this.tlpDate.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpDate.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpDate.Size = new System.Drawing.Size(381, 52);
-            this.tlpDate.TabIndex = 0;
-            // 
-            // LblDatStart
-            // 
-            this.LblDatStart.AutoSize = true;
-            this.LblDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LblDatStart.Location = new System.Drawing.Point(3, 0);
-            this.LblDatStart.Name = "LblDatStart";
-            this.LblDatStart.Size = new System.Drawing.Size(32, 26);
-            this.LblDatStart.TabIndex = 0;
-            this.LblDatStart.Text = "Start:";
-            this.LblDatStart.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // LblDatEnd
-            // 
-            this.LblDatEnd.AutoSize = true;
-            this.LblDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LblDatEnd.Location = new System.Drawing.Point(3, 26);
-            this.LblDatEnd.Name = "LblDatEnd";
-            this.LblDatEnd.Size = new System.Drawing.Size(32, 26);
-            this.LblDatEnd.TabIndex = 1;
-            this.LblDatEnd.Text = "End:";
-            this.LblDatEnd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // dtpDatStart
-            // 
-            this.dtpDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dtpDatStart.Enabled = false;
-            this.dtpDatStart.Location = new System.Drawing.Point(41, 3);
-            this.dtpDatStart.Name = "dtpDatStart";
-            this.dtpDatStart.Size = new System.Drawing.Size(317, 20);
-            this.dtpDatStart.TabIndex = 2;
-            // 
-            // dtpDatEnd
-            // 
-            this.dtpDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dtpDatEnd.Enabled = false;
-            this.dtpDatEnd.Location = new System.Drawing.Point(41, 29);
-            this.dtpDatEnd.Name = "dtpDatEnd";
-            this.dtpDatEnd.Size = new System.Drawing.Size(317, 20);
-            this.dtpDatEnd.TabIndex = 3;
-            // 
-            // cbDatStart
-            // 
-            this.cbDatStart.AutoSize = true;
-            this.cbDatStart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbDatStart.Location = new System.Drawing.Point(364, 3);
-            this.cbDatStart.Name = "cbDatStart";
-            this.cbDatStart.Size = new System.Drawing.Size(14, 20);
-            this.cbDatStart.TabIndex = 4;
-            this.cbDatStart.UseVisualStyleBackColor = true;
-            this.cbDatStart.CheckedChanged += new System.EventHandler(this.cbDatStart_CheckedChanged);
-            // 
-            // cbDatEnd
-            // 
-            this.cbDatEnd.AutoSize = true;
-            this.cbDatEnd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbDatEnd.Location = new System.Drawing.Point(364, 29);
-            this.cbDatEnd.Name = "cbDatEnd";
-            this.cbDatEnd.Size = new System.Drawing.Size(14, 20);
-            this.cbDatEnd.TabIndex = 5;
-            this.cbDatEnd.UseVisualStyleBackColor = true;
-            this.cbDatEnd.CheckedChanged += new System.EventHandler(this.cbDatEnd_CheckedChanged);
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1112,6 +1112,9 @@
             this.gbCondition.ResumeLayout(false);
             this.tlpConditions.ResumeLayout(false);
             this.tlpConditions.PerformLayout();
+            this.gbDate.ResumeLayout(false);
+            this.tlpDate.ResumeLayout(false);
+            this.tlpDate.PerformLayout();
             this.tbpResults.ResumeLayout(false);
             this.tlpResultsPage.ResumeLayout(false);
             this.gbColumns.ResumeLayout(false);
@@ -1130,9 +1133,6 @@
             this.tscMain.PerformLayout();
             this.msMenu.ResumeLayout(false);
             this.msMenu.PerformLayout();
-            this.gbDate.ResumeLayout(false);
-            this.tlpDate.ResumeLayout(false);
-            this.tlpDate.PerformLayout();
             this.ResumeLayout(false);
 
         }

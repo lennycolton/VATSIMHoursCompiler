@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Buffers;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -39,24 +41,26 @@ namespace VATSIMHoursCompiler
                 listResults.AddRange(record.results);
             }
 
-            List<IGrouping<string, JsonResult>> enumJsonCs = null;
+           List<IGrouping<string, JsonResult>> enumJsonCs = null;
 
-            if (start == default(DateTime) && end == default(DateTime))
+            if (start == default && end == default)
             {
-                enumJsonCs = listResults.Where(x => x.start >= start).Where(y => y.end <= end || y.end == null).GroupBy(z => z.cs).ToList();
+                enumJsonCs = listResults.GroupBy(z => z.cs).ToList();
             }
-            else if (start == default(DateTime))
+            else if (start == default)
             {
                 enumJsonCs = listResults.Where(y => y.end <= end || y.end == null).GroupBy(z => z.cs).ToList();
             }
-            else if (end == default(DateTime))
+            else if (end == default)
             {
                 enumJsonCs = listResults.Where(x => x.start >= start).GroupBy(z => z.cs).ToList();
             }
             else
             {
-                enumJsonCs = listResults.GroupBy(z => z.cs).ToList();
+                enumJsonCs = listResults.Where(x => x.start >= start).Where(y => y.end <= end || y.end == null).GroupBy(z => z.cs).ToList();
             }
+
+            mem.listRecords.Clear();
 
             List<Result> listRes = Result.Create(enumJsonCs);
 
@@ -113,8 +117,6 @@ namespace VATSIMHoursCompiler
                 Record rcdNew = new Record(mem, pos, decMins);
                 mem.listRecords.Add(rcdNew);
             }
-
-            //mem.listRecords = Record.Sort(mem.listRecords);
         }
 
         private static List<JsonRecord> PullSessions(int _cid)
@@ -122,7 +124,7 @@ namespace VATSIMHoursCompiler
             List<JsonRecord> listReturn = new List<JsonRecord>();
 
             WebClient wct = new WebClient();
-            listReturn.Add(JsonSerializer.Deserialize<JsonRecord>(wct.DownloadString("https://api.vatsim.net/api/ratings/" + _cid + "/atcsessions/?format=json")));
+            listReturn.Add(JsonSerializer.Deserialize<JsonRecord>(wct.DownloadString("https://api.vatsim.net/api/ratings/" + _cid + "/atcsessions/?format=json"), new JsonSerializerOptions()));
 
             while (listReturn.Last().next != null)
             {
@@ -130,7 +132,7 @@ namespace VATSIMHoursCompiler
             }
 
             return listReturn;
-        }
+            }
     }
 
     public class JsonResult
@@ -138,8 +140,8 @@ namespace VATSIMHoursCompiler
         [JsonPropertyName("callsign")]
         public string cs { get; set; }
 
-        [JsonPropertyName("minutes_on_callsign")]
-        public string time { get; set; }
+        [JsonConverter(typeof(StringToDecimalJsonConverter)), JsonPropertyName("minutes_on_callsign")]
+        public decimal time { get; set; }
 
         [JsonPropertyName("start")]
         public DateTime? start { get; set; }
@@ -184,6 +186,29 @@ namespace VATSIMHoursCompiler
             WebClient wct = new WebClient();
             string strJson = wct.DownloadString("https://api.vatsim.net/api/ratings/" + _cid + "/?format=json");
             return JsonSerializer.Deserialize<JsonMember>(strJson);
+        }
+    }
+
+    public class StringToDecimalJsonConverter : JsonConverter<decimal>
+    {
+        public override decimal Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                ReadOnlySpan<byte> span = reader.HasValueSequence ? reader.ValueSequence.ToArray() : reader.ValueSpan;
+                if (Utf8Parser.TryParse(span, out decimal number, out int bytesConsumed) && span.Length == bytesConsumed)
+                    return number;
+
+                if (decimal.TryParse(reader.GetString(), out number))
+                    return number;
+            }
+
+            return reader.GetDecimal();
+        }
+
+        public override void Write(Utf8JsonWriter writer, decimal decValue, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(decValue.ToString());
         }
     }
 }

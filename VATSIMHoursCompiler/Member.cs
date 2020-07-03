@@ -48,7 +48,7 @@ namespace VATSIMHoursCompiler
             intRating = _rating;
         }
 
-        public Member () { }
+        public Member() { }
 
         public static Member Add(int _cid)
         {

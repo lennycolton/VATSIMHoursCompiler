@@ -97,6 +97,11 @@ namespace VATSIMHoursCompiler
 
         public static Position Find(int _id)
         {
+            if (list.Count == 0)
+            {
+                return null;
+            }
+
             //Create field
             Position posCurrent = null;
 
@@ -234,6 +239,11 @@ namespace VATSIMHoursCompiler
 
         public static Condition Find(Position pos, int _id)
         {
+            if (pos.listConditions.Count == 0)
+            {
+                return null;
+            }
+
             //Create field
             Condition conCurrent = null;
 
@@ -241,11 +251,6 @@ namespace VATSIMHoursCompiler
             int intMidpoint;
             int intMin = 0;
             int intMax = pos.listConditions.Count - 1;
-
-            if (intMax < 0)
-            {
-                return null;
-            }
 
             do
             {

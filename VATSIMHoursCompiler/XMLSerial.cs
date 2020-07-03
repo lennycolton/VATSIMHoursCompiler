@@ -20,19 +20,27 @@ namespace VATSIMHoursCompiler
         [XmlArrayItem("Position")]
         public List<Position> listPositions { get; set; }
 
-        public XMLSerial(List<Member> _mem, List<Position> _pos)
+        [XmlElement("Start")]
+        public DateTime? dtStart { get; set; }
+
+        [XmlElement("End")]
+        public DateTime? dtEnd { get; set; }
+
+        public XMLSerial(List<Member> _mem, List<Position> _pos, DateTime? _start, DateTime? _end)
         {
             listMembers = _mem;
             listPositions = _pos;
+            dtStart = _start;
+            dtEnd = _end;
         }
 
         public XMLSerial() { }
 
-        public static void Save(string _path)
+        public static void Save(string _path, DateTime? _start, DateTime? _end)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(XMLSerial));
 
-            XMLSerial xms = new XMLSerial(Member.list, Position.listRoot);
+            XMLSerial xms = new XMLSerial(Member.list, Position.listRoot, _start, _end);
 
             foreach (Position pos in Position.list)
             {
@@ -72,7 +80,7 @@ namespace VATSIMHoursCompiler
             fs.Close();
         }
 
-        public static void Load(string _path)
+        public static DateTime?[] Load(string _path)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(XMLSerial));
 
@@ -109,12 +117,16 @@ namespace VATSIMHoursCompiler
                     pos.listConditions.AddRange(pos.listCs);
 
                     pos.listConditions = Condition.Sort(pos.listConditions);
+
+                    return new DateTime?[] { xms.dtStart, xms.dtEnd };
                 }
             }
             catch
             {
                 MessageBox.Show("Unable to read data from file. The file may be corrupt, incorrectly formatted, or inaccessible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            return null;
         }
     }
 }

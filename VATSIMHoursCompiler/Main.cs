@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -473,14 +474,14 @@ namespace VATSIMHoursCompiler
             {
                 case "Prefix Only":
                     strType = "Prefix";
-                    strValue = TxtCon1.Text;
+                    strValue = TxtCon1.Text.ToUpper();
 
                     con = new PreCondition(conid, strName, strValue);
                     break;
 
                 case "Suffix Only":
                     strType = "Suffix";
-                    strValue = TxtCon1.Text;
+                    strValue = TxtCon1.Text.ToUpper();
 
                     con = new SufCondition(conid, strName, strValue);
                     break;
@@ -488,16 +489,16 @@ namespace VATSIMHoursCompiler
                 case "Prefix and Suffix":
                     strType = "Prefix/Suffix";
 
-                    string str1 = TxtCon1.Text;
-                    string str2 = TxtCon2.Text;
-                    strValue = TxtCon1.Text + "/" + TxtCon2.Text;
+                    string str1 = TxtCon1.Text.ToUpper();
+                    string str2 = TxtCon2.Text.ToUpper();
+                    strValue = str1 + "/" + str2;
 
                     con = new PreSufCondition(conid, strName, str1, str2);
                     break;
 
                 case "Specific Callsign":
                     strType = "Callsign";
-                    strValue = TxtCon1.Text;
+                    strValue = TxtCon1.Text.ToUpper();
 
                     con = new CsCondition(conid, strName, strValue);
                     break;
@@ -588,10 +589,10 @@ namespace VATSIMHoursCompiler
                 MessageBox.Show("There was an error while accessing the VATSIM Member Data API.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            try
-            {
-                DateTime dtStart = default(DateTime);
-                DateTime dtEnd = default(DateTime);
+            //try
+            //{
+                DateTime dtStart = default;
+                DateTime dtEnd = default;
 
                 if (dtpDatStart.Enabled)
                 {
@@ -606,12 +607,12 @@ namespace VATSIMHoursCompiler
                 }
 
                 JsonRecord.PullAll(dtStart, dtEnd);
-            }
-            catch
-            {
-                ((bool[])e.Result)[1] = false;
-                MessageBox.Show("There was an error while accessing the VATSIM Statistics API. Note that the API will always fail if one of the requested members is currently online.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            //}
+            //catch
+            //{
+            //    ((bool[])e.Result)[1] = false;
+            //    MessageBox.Show("There was an error while accessing the VATSIM Statistics API. Note that the API will always fail if one of the requested members is currently online.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
         }
 
         private void BgwAPI_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -867,14 +868,30 @@ namespace VATSIMHoursCompiler
                 if (result == DialogResult.OK && sfdProfile.FileName != "")
                 {
                     StartProgressBar();
-                    bgwSaveProfile.RunWorkerAsync(sfdProfile.FileName);
+
+                    DateTime? start = null;
+                    DateTime? end = null;
+
+                    if (cbDatStart.Checked)
+                    {
+                        start = dtpDatStart.Value;
+                    }
+
+                    if (cbDatEnd.Checked)
+                    {
+                        end = dtpDatEnd.Value;
+                    }
+
+                    bgwSaveProfile.RunWorkerAsync(new Tuple<string, DateTime?, DateTime?>(sfdProfile.FileName, start, end));
                 }
             }
         }
 
         private void BgwSaveProfile_DoWork(object sender, DoWorkEventArgs e)
         {
-            XMLSerial.Save((string)e.Argument);
+            Tuple<string, DateTime?, DateTime?> arg = (Tuple<string, DateTime?, DateTime?>)e.Argument;
+
+            XMLSerial.Save(arg.Item1, arg.Item2, arg.Item3);
         }
 
         private void BgwSaveProfile_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -912,56 +929,87 @@ namespace VATSIMHoursCompiler
 
         private void BgwLoadProfile_DoWork(object sender, DoWorkEventArgs e)
         {
-            XMLSerial.Load((string)e.Argument);
+            e.Result = XMLSerial.Load((string)e.Argument);
         }
 
         private void BgwLoadProfile_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (!bgwAPI.IsBusy && !bgwExport.IsBusy && !bgwSaveProfile.IsBusy)
+            if (e.Result != null)
             {
-                StopProgressBar();
-            }
-
-            lvMembers.Items.Clear();
-            lvPositions.Items.Clear();
-
-            tlpDetails.Hide();
-            tlpConditions.Hide();
-
-            foreach (Member mem in Member.list)
-            {
-                ListViewItem lviTemp = new ListViewItem(new string[] { mem.intCID.ToString(), mem.strName, Member.ratings[mem.intRating] });
-                lviTemp.Tag = mem;
-
-                if (mem.intCID == 1332038)
+                if (!bgwAPI.IsBusy && !bgwExport.IsBusy && !bgwSaveProfile.IsBusy)
                 {
-                    lviTemp.Font = new Font("Comic Sans MS", lviTemp.Font.Size);
+                    StopProgressBar();
                 }
 
-                lvMembers.Items.Add(lviTemp);
-            }
+                lvMembers.Items.Clear();
+                lvPositions.Items.Clear();
 
-            ResizeListViewColumns(lvMembers);
+                tlpDetails.Hide();
+                tlpConditions.Hide();
 
-            foreach (Position pos in Position.list)
-            {
-                string parent = "";
-
-                if (pos.posParent != null)
+                foreach (Member mem in Member.list)
                 {
-                    parent = pos.posParent.strName;
+                    ListViewItem lviTemp = new ListViewItem(new string[] { mem.intCID.ToString(), mem.strName, Member.ratings[mem.intRating] });
+                    lviTemp.Tag = mem;
+
+                    if (mem.intCID == 1332038)
+                    {
+                        lviTemp.Font = new Font("Comic Sans MS", lviTemp.Font.Size);
+                    }
+
+                    lvMembers.Items.Add(lviTemp);
                 }
 
-                ListViewItem lviTemp = new ListViewItem(new string[] { pos.strName, parent, pos.listConditions.Count.ToString() });
-                lviTemp.Tag = pos;
-                lvPositions.Items.Add(lviTemp);
+                ResizeListViewColumns(lvMembers);
+
+                foreach (Position pos in Position.list)
+                {
+                    string parent = "";
+
+                    if (pos.posParent != null)
+                    {
+                        parent = pos.posParent.strName;
+                    }
+
+                    ListViewItem lviTemp = new ListViewItem(new string[] { pos.strName, parent, pos.listConditions.Count.ToString() });
+                    lviTemp.Tag = pos;
+                    lvPositions.Items.Add(lviTemp);
+                }
+
+                ResizeListViewColumns(lvPositions);
+
+                DateTime?[] dts = (DateTime?[])e.Result;
+
+                if (dts[0] == null)
+                {
+                    cbDatStart.Checked = false;
+                    dtpDatStart.Enabled = false;
+                    dtpDatStart.Value = DateTime.UtcNow;
+                }
+                else
+                {
+                    cbDatStart.Checked = true;
+                    dtpDatStart.Enabled = true;
+                    dtpDatStart.Value = (DateTime)dts[0];
+                }
+
+                if (dts[1] == null)
+                {
+                    cbDatEnd.Checked = false;
+                    dtpDatEnd.Enabled = false;
+                    dtpDatEnd.Value = DateTime.UtcNow;
+                }
+                else
+                {
+                    cbDatEnd.Checked = true;
+                    dtpDatEnd.Enabled = true;
+                    dtpDatEnd.Value = (DateTime)dts[1];
+                }
+
+                PopulateColumnsSelector();
+
+                //MessageBox.Show("Profile loaded successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-
-            ResizeListViewColumns(lvPositions);
-
-            PopulateColumnsSelector();
-
-            //MessageBox.Show("Profile loaded successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void PopulateColumnsSelector()

@@ -35,6 +35,11 @@ namespace VATSIMHoursCompiler
 
         public static Record Find(List<Record> _list, int _pos)
         {
+            if (_list.Count == 0)
+            {
+                return null;
+            }
+
             //Create field
             Record rcdCurrent = null;
 
@@ -42,11 +47,6 @@ namespace VATSIMHoursCompiler
             int intMidpoint;
             int intMin = 0;
             int intMax = _list.Count - 1;
-
-            if (intMax < 0)
-            {
-                return null;
-            }
 
             do
             {
@@ -177,13 +177,19 @@ namespace VATSIMHoursCompiler
 
             foreach (JsonResult jrs in listGrp)
             {
-                res.time += decimal.Parse(jrs.time);
+                res.time += jrs.time;
             }
 
             return res;
         }
+
         public static Result FindCs(List<Result> _list, string _cs)
         {
+            if (_list.Count == 0)
+            {
+                return null;
+            }
+
             //Create field
             Result jsrCurrent = null;
 
@@ -224,6 +230,11 @@ namespace VATSIMHoursCompiler
         //Binary Search, based on ID of related Leg Route
         public static List<Result> FindPre(List<Result> _list, string _pre)
         {
+            if (_list.Count == 0)
+            {
+                return new List<Result>();
+            }
+
             //Create fields
             Result jsrCurrent = null;
             List<Result> listResults;
@@ -295,6 +306,11 @@ namespace VATSIMHoursCompiler
         //Binary Search, based on ID of related Leg Route
         public static List<Result> FindSuf(List<Result> _list, string _suf)
         {
+            if (_list.Count == 0)
+            {
+                return new List<Result>();
+            }
+
             //Create fields
             Result jsrCurrent = null;
             List<Result> listResults;
