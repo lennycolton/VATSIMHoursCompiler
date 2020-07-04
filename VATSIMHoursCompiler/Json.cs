@@ -107,6 +107,8 @@ namespace VATSIMHoursCompiler
                     }
                 }
 
+                listFind = listFind.Distinct().ToList();
+
                 decimal decMins = 0;
 
                 foreach (Result jsr in listFind)
