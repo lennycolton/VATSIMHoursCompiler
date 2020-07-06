@@ -117,9 +117,9 @@ namespace VATSIMHoursCompiler
                     pos.listConditions.AddRange(pos.listCs);
 
                     pos.listConditions = Condition.Sort(pos.listConditions);
-
-                    return new DateTime?[] { xms.dtStart, xms.dtEnd };
                 }
+
+                return new DateTime?[] { xms.dtStart, xms.dtEnd };
             }
             catch
             {
