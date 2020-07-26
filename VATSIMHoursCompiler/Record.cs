@@ -276,7 +276,7 @@ namespace VATSIMHoursCompiler
                     intCurrent = intMidpoint + 1;
                     jsrCurrent = _list[intCurrent];
 
-                    while (string.Compare(jsrCurrent.pre, _pre) == 0 && intCurrent < _list.Count - 1)
+                    while (string.Compare(jsrCurrent.pre, _pre) == 0 && intCurrent < _list.Count - 2)
                     {
                         //Add value to results list and increment up
                         listResults.Add(jsrCurrent);
@@ -352,7 +352,7 @@ namespace VATSIMHoursCompiler
                     intCurrent = intMidpoint + 1;
                     jsrCurrent = _list[intCurrent];
 
-                    while (string.Compare(jsrCurrent.suf, _suf) == 0 && intCurrent < _list.Count - 1)
+                    while (string.Compare(jsrCurrent.suf, _suf) == 0 && intCurrent < _list.Count - 2)
                     {
                         //Add value to results list and increment up
                         listResults.Add(jsrCurrent);
