@@ -261,27 +261,41 @@ namespace VATSIMHoursCompiler
                     listResults.Add(jsrCurrent);
 
                     //Add all matching with lower indices
-                    intCurrent = intMidpoint - 1;
-                    jsrCurrent = _list[intCurrent];
+                    intCurrent = intMidpoint;
 
-                    while (string.Compare(jsrCurrent.pre, _pre) == 0 && intCurrent > 0)
+                    while (intCurrent > 0)
                     {
                         //Add value to results list and increment down
-                        listResults.Add(jsrCurrent);
                         intCurrent--;
                         jsrCurrent = _list[intCurrent];
+
+                        if (string.Compare(jsrCurrent.pre, _pre) == 0)
+                        {
+                            listResults.Add(jsrCurrent);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
 
                     //Add all matching with higher indices
-                    intCurrent = intMidpoint + 1;
-                    jsrCurrent = _list[intCurrent];
+                    intCurrent = intMidpoint;
 
-                    while (string.Compare(jsrCurrent.pre, _pre) == 0 && intCurrent < _list.Count - 2)
+                    while (intCurrent < _list.Count - 2)
                     {
                         //Add value to results list and increment up
-                        listResults.Add(jsrCurrent);
                         intCurrent++;
                         jsrCurrent = _list[intCurrent];
+
+                        if (string.Compare(jsrCurrent.pre, _pre) == 0)
+                        {
+                            listResults.Add(jsrCurrent);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
 
                     //Return results
@@ -337,27 +351,41 @@ namespace VATSIMHoursCompiler
                     listResults.Add(jsrCurrent);
 
                     //Add all matching with lower indices
-                    intCurrent = intMidpoint - 1;
-                    jsrCurrent = _list[intCurrent];
+                    intCurrent = intMidpoint;
 
-                    while (string.Compare(jsrCurrent.suf, _suf) == 0 && intCurrent > 0)
+                    while (intCurrent > 0)
                     {
                         //Add value to results list and increment down
-                        listResults.Add(jsrCurrent);
                         intCurrent--;
                         jsrCurrent = _list[intCurrent];
+
+                        if (string.Compare(jsrCurrent.suf, _suf) == 0)
+                        {
+                            listResults.Add(jsrCurrent);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
 
                     //Add all matching with higher indices
-                    intCurrent = intMidpoint + 1;
-                    jsrCurrent = _list[intCurrent];
+                    intCurrent = intMidpoint;
 
-                    while (string.Compare(jsrCurrent.suf, _suf) == 0 && intCurrent < _list.Count - 2)
+                    while (intCurrent < _list.Count - 2)
                     {
                         //Add value to results list and increment up
-                        listResults.Add(jsrCurrent);
                         intCurrent++;
                         jsrCurrent = _list[intCurrent];
+
+                        if (string.Compare(jsrCurrent.suf, _suf) == 0)
+                        {
+                            listResults.Add(jsrCurrent);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
 
                     //Return results

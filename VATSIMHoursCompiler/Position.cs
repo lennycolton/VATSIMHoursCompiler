@@ -77,6 +77,12 @@ namespace VATSIMHoursCompiler
             return pos;
         }
 
+        //Sets counter to highest position in list + 1 (for use when loading profile from file)
+        public static void setCount()
+        {
+            Count = list.Last().intID + 1;
+        }
+
         private static void IncrementCounter()
         {
             Count++;

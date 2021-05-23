@@ -101,6 +101,7 @@ namespace VATSIMHoursCompiler
                 }
 
                 Position.list = Position.Sort(Position.list);
+                Position.setCount();
 
                 foreach (Position pos in Position.list)
                 {
