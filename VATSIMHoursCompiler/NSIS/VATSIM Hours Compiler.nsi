@@ -6,10 +6,10 @@
 
 !define APP_NAME "VATSIM Hours Compiler"
 !define COMP_NAME "Lenny Colton"
-!define VERSION "1.3.0.0"
-!define COPYRIGHT "� 2020 Lenny Colton - All Rights Reserved"
+!define VERSION "1.4.1.0"
+!define COPYRIGHT "� 2021 Lenny Colton - All Rights Reserved"
 !define DESCRIPTION "A simple tool to view the hours accrued by VATSIM members on various ATC positions or position groups. The data is tabulated and can be exported as a .csv file."
-!define INSTALLER_NAME "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\NSIS\VATSIMHoursCompiler-1.4-Setup.exe"
+!define INSTALLER_NAME "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\NSIS\VATSIMHoursCompiler-1.4.1-Setup.exe"
 !define MAIN_APP_EXE "VATSIMHoursCompiler.exe"
 !define INSTALL_TYPE "SetShellVarContext all"
 !define REG_ROOT "HKLM"
