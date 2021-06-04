@@ -9,7 +9,7 @@
 !define VERSION "1.4.1.0"
 !define COPYRIGHT "� 2021 Lenny Colton - All Rights Reserved"
 !define DESCRIPTION "A simple tool to view the hours accrued by VATSIM members on various ATC positions or position groups. The data is tabulated and can be exported as a .csv file."
-!define INSTALLER_NAME "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\NSIS\VATSIMHoursCompiler-1.4.1-Setup.exe"
+!define INSTALLER_NAME ".\VATSIMHoursCompiler-1.4.1-Setup.exe"
 !define MAIN_APP_EXE "VATSIMHoursCompiler.exe"
 !define INSTALL_TYPE "SetShellVarContext all"
 !define REG_ROOT "HKLM"
@@ -48,9 +48,9 @@ InstallDir "$PROGRAMFILES\VATSIM Hours Compiler"
 !define MUI_ABORTWARNING
 !define MUI_UNABORTWARNING
 
-!define MUI_ICON "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\vatsimuk blips.ico"
+!define MUI_ICON "..\vatsimuk blips.ico"
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\vatsimuk blips.png"
+!define MUI_HEADERIMAGE_BITMAP "..\vatsimuk blips.png"
 !define MUI_HEADERIMAGE_RIGHT
 
 !insertmacro MUI_PAGE_WELCOME
@@ -103,17 +103,17 @@ NotInstalled:
   ${INSTALL_TYPE}
   SetOverwrite ifnewer
   SetOutPath "$INSTDIR"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\Microsoft.Bcl.AsyncInterfaces.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\System.Buffers.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\System.Memory.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\System.Numerics.Vectors.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\System.Runtime.CompilerServices.Unsafe.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\System.Text.Encodings.Web.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\System.Text.Json.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\System.Threading.Tasks.Extensions.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\System.ValueTuple.dll"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\VATSIMHoursCompiler.exe"
-  File "D:\Lenny\Documents\Visual Studio Projects\VATSIMHoursCompiler\VATSIMHoursCompiler\bin\Release\VATSIMHoursCompiler.exe.config"
+  File "..\bin\Release\Microsoft.Bcl.AsyncInterfaces.dll"
+  File "..\bin\Release\System.Buffers.dll"
+  File "..\bin\Release\System.Memory.dll"
+  File "..\bin\Release\System.Numerics.Vectors.dll"
+  File "..\bin\Release\System.Runtime.CompilerServices.Unsafe.dll"
+  File "..\bin\Release\System.Text.Encodings.Web.dll"
+  File "..\bin\Release\System.Text.Json.dll"
+  File "..\bin\Release\System.Threading.Tasks.Extensions.dll"
+  File "..\bin\Release\System.ValueTuple.dll"
+  File "..\bin\Release\VATSIMHoursCompiler.exe"
+  File "..\bin\Release\VATSIMHoursCompiler.exe.config"
 SectionEnd
 
 ######################################################################
