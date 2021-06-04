@@ -34,7 +34,7 @@ namespace VATSIMHoursCompiler
 
             clbColumns.ItemCheck += ClbColumns_ItemCheck;
 
-            Text += " - Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
+            Text += " - Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
         }
 
         private void SetColumnWidth()
