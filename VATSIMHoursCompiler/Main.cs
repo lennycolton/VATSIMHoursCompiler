@@ -68,33 +68,48 @@ namespace VATSIMHoursCompiler
             lv.EndUpdate();
         }
 
+        private bool TryAddMemberByCid(int cid, out ListViewItem newIten)
+        {
+            newIten = null;
+            Member memTemp = Member.Add(cid);
+
+            if (memTemp == null)
+            {
+                MessageBox.Show($"{cid} has already been added.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            ListViewItem lviTemp = new ListViewItem(new string[] { cid.ToString(), memTemp.strName, Member.ratings[memTemp.intRating] });
+            lviTemp.Tag = memTemp;
+
+            if (cid == 1332038)
+            {
+                lviTemp.Font = new Font("Comic Sans MS", lviTemp.Font.Size);
+            }
+            
+            if (cid == 1783703)
+            {
+                lviTemp.Font = new Font("Impact", lviTemp.Font.Size);
+            }
+
+                lvMembers.Items.Add(lviTemp);
+            return true;
+        }
+
         private void BtnMemAdd_Click(object sender, EventArgs e)
         {
             int cid = -1;
 
             if (int.TryParse(TxtMemCID.Text, out cid))
             {
-                Member memTemp = Member.Add(cid);
-
-                if (memTemp == null)
+                ListViewItem lviTemp;
+                if (TryAddMemberByCid(cid, out lviTemp))
                 {
-                    MessageBox.Show("Member has already been added.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    lvMembers.SelectedItems.Clear();
+                    lvMembers.SelectedIndices.Add(lvMembers.Items.Count - 1);
+
+                    ResizeListViewColumns(lvMembers);
                 }
-
-                ListViewItem lviTemp = new ListViewItem(new string[] { cid.ToString(), memTemp.strName, Member.ratings[memTemp.intRating] });
-                lviTemp.Tag = memTemp;
-
-                if (cid == 1332038)
-                {
-                    lviTemp.Font = new Font("Comic Sans MS", lviTemp.Font.Size);
-                }
-
-                lvMembers.Items.Add(lviTemp);
-
-                lvMembers.SelectedItems.Clear();
-                lvMembers.SelectedIndices.Add(lvMembers.Items.Count - 1);
-
-                ResizeListViewColumns(lvMembers);
             }
 
             TxtMemCID.Clear();
@@ -108,6 +123,79 @@ namespace VATSIMHoursCompiler
                 lvMembers.Items.Remove(lvMembers.SelectedItems[0]);
 
                 ResizeListViewColumns(lvMembers);
+            }
+        }
+
+        private void BtnMemUpload_Click_1(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile  = new OpenFileDialog();
+            openFile.Title = "Select CID List";
+            openFile.Filter = "CSV Files (*.csv)|*.csv|Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+            openFile.Multiselect = false;
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                int successCount = 0;
+                int duplicateCount = 0;
+                int invalidCount = 0;
+                string filePath = openFile.FileName;
+
+                try
+                {
+                    string[] lines = File.ReadAllLines(filePath);
+
+                    lvMembers.BeginUpdate();
+
+                    foreach (string line in lines)
+                    {
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+
+                        string[] cidStrings = line.Split(',');
+
+                        foreach (string cidString in cidStrings)
+                        {
+                            string trimmedCid = cidString.Trim();
+                            if (string.IsNullOrEmpty(trimmedCid)) continue;
+
+                            int cid;
+
+                            if (int.TryParse(trimmedCid, out cid))
+                            {
+                                ListViewItem newItem;
+                                if (TryAddMemberByCid(cid, out newItem))
+                                {
+                                    successCount++;
+                                }
+                                else
+                                {
+                                    duplicateCount++;
+                                }
+                            }
+                            else
+                            {
+                                invalidCount++;
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error reading file: {ex.Message}", "File Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    lvMembers.EndUpdate();
+                }
+
+                if (successCount > 0)
+                {
+                    ResizeListViewColumns(lvMembers);
+                }
+
+                string summary = $"Upload complete.\n\n" +
+                         $"Successfully added {successCount} cids";
+                MessageBox.Show(summary, "Upload Summary", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

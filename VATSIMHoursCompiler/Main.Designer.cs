@@ -60,6 +60,7 @@
             this.BtnPosAdd = new System.Windows.Forms.Button();
             this.gbMembers = new System.Windows.Forms.GroupBox();
             this.tlpMembers = new System.Windows.Forms.TableLayoutPanel();
+            this.BtnMemUpload = new System.Windows.Forms.Button();
             this.LblMemCID = new System.Windows.Forms.Label();
             this.lvMembers = new System.Windows.Forms.ListView();
             this.chCID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -474,11 +475,13 @@
             // 
             // tlpMembers
             // 
-            this.tlpMembers.ColumnCount = 4;
+            this.tlpMembers.ColumnCount = 5;
             this.tlpMembers.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 62F));
             this.tlpMembers.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMembers.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81F));
             this.tlpMembers.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81F));
+            this.tlpMembers.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81F));
+            this.tlpMembers.Controls.Add(this.BtnMemUpload, 4, 0);
             this.tlpMembers.Controls.Add(this.LblMemCID, 0, 0);
             this.tlpMembers.Controls.Add(this.lvMembers, 0, 1);
             this.tlpMembers.Controls.Add(this.BtnMemAdd, 2, 0);
@@ -490,9 +493,19 @@
             this.tlpMembers.RowCount = 2;
             this.tlpMembers.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tlpMembers.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpMembers.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpMembers.Size = new System.Drawing.Size(381, 181);
             this.tlpMembers.TabIndex = 0;
+            // 
+            // BtnMemUpload
+            // 
+            this.BtnMemUpload.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BtnMemUpload.Location = new System.Drawing.Point(303, 3);
+            this.BtnMemUpload.Name = "BtnMemUpload";
+            this.BtnMemUpload.Size = new System.Drawing.Size(75, 23);
+            this.BtnMemUpload.TabIndex = 5;
+            this.BtnMemUpload.Text = "Upload";
+            this.BtnMemUpload.UseVisualStyleBackColor = true;
+            this.BtnMemUpload.Click += new System.EventHandler(this.BtnMemUpload_Click_1);
             // 
             // LblMemCID
             // 
@@ -512,7 +525,7 @@
             this.chName,
             this.chRating,
             this.chBlank});
-            this.tlpMembers.SetColumnSpan(this.lvMembers, 4);
+            this.tlpMembers.SetColumnSpan(this.lvMembers, 5);
             this.lvMembers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvMembers.GridLines = true;
             this.lvMembers.HideSelection = false;
@@ -543,7 +556,7 @@
             // BtnMemAdd
             // 
             this.BtnMemAdd.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.BtnMemAdd.Location = new System.Drawing.Point(222, 3);
+            this.BtnMemAdd.Location = new System.Drawing.Point(141, 3);
             this.BtnMemAdd.Name = "BtnMemAdd";
             this.BtnMemAdd.Size = new System.Drawing.Size(75, 23);
             this.BtnMemAdd.TabIndex = 2;
@@ -554,7 +567,7 @@
             // BtnMemRemove
             // 
             this.BtnMemRemove.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.BtnMemRemove.Location = new System.Drawing.Point(303, 3);
+            this.BtnMemRemove.Location = new System.Drawing.Point(222, 3);
             this.BtnMemRemove.Name = "BtnMemRemove";
             this.BtnMemRemove.Size = new System.Drawing.Size(75, 23);
             this.BtnMemRemove.TabIndex = 3;
@@ -567,7 +580,7 @@
             this.TxtMemCID.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TxtMemCID.Location = new System.Drawing.Point(65, 3);
             this.TxtMemCID.Name = "TxtMemCID";
-            this.TxtMemCID.Size = new System.Drawing.Size(151, 20);
+            this.TxtMemCID.Size = new System.Drawing.Size(70, 20);
             this.TxtMemCID.TabIndex = 1;
             // 
             // gbCondition
@@ -1064,7 +1077,7 @@
             // exportResultsToolStripMenuItem
             // 
             this.exportResultsToolStripMenuItem.Name = "exportResultsToolStripMenuItem";
-            this.exportResultsToolStripMenuItem.Size = new System.Drawing.Size(93, 20);
+            this.exportResultsToolStripMenuItem.Size = new System.Drawing.Size(92, 20);
             this.exportResultsToolStripMenuItem.Text = "Export Results";
             this.exportResultsToolStripMenuItem.Click += new System.EventHandler(this.exportDataToolStripMenuItem_Click);
             // 
@@ -1229,6 +1242,7 @@
         private System.Windows.Forms.DateTimePicker dtpDatStart;
         private System.Windows.Forms.DateTimePicker dtpDatEnd;
         private System.Windows.Forms.CheckBox cbDatStart;
+        private System.Windows.Forms.Button BtnMemUpload;
     }
 }
 
