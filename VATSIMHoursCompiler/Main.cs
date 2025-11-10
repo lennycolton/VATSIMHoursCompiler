@@ -115,6 +115,21 @@ namespace VATSIMHoursCompiler
         {
             Position posTemp = Position.Add(TxtPosName.Text, null);
 
+            string posName = posTemp.strName;
+            string[] parts = posName.Split(new[] { '_' }, 2);
+
+            if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+            {
+                string prefix = parts[0].ToUpper();
+                string suffix = parts[1].ToUpper();
+                string condName = posTemp.strName;
+
+                Condition baseCon = Condition.Create(condName);
+                PreSufCondition preSufCon = new PreSufCondition(baseCon.intID, condName, prefix, suffix);
+
+                posTemp.listConditions.Add(preSufCon);
+            }
+
             string parent = "";
 
             if (posTemp.posParent != null)
